@@ -278,9 +278,64 @@
         </div>
 
         <!-- Submit Button -->
-        <button onclick="generateResults()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-lg text-lg transition">
+        <button onclick="generateResults()" class="w-full text-white font-semibold py-4 px-6 rounded-lg text-lg transition" style="background-color:#286140;" onmouseover="this.style.backgroundColor='#214f33'" onmouseout="this.style.backgroundColor='#286140'">
           See Requirements & Contacts
         </button>
+      </div>
+    </div>
+
+    <!-- EMAIL GATE MODAL (Hidden initially) -->
+    <div id="email-gate" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="relative min-h-full flex items-start justify-center px-4 py-6 md:py-10">
+        <div class="w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="email-gate-title">
+          <div class="p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="email-gate-title" class="text-2xl font-bold text-gray-900">Get your results</h2>
+                <p class="text-gray-600 mt-1">Enter your details to view your personalized permit requirements.</p>
+              </div>
+              <button type="button" class="text-gray-500 hover:text-gray-800" aria-label="Close" onclick="closeEmailGate()">
+                ✕
+              </button>
+            </div>
+
+            <form id="email-gate-form" class="mt-6" novalidate>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="lead-first-name" class="block text-sm font-medium text-gray-700">Name</label>
+                  <input id="lead-first-name" name="firstName" type="text" autocomplete="given-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div>
+                  <label for="lead-last-name" class="block text-sm font-medium text-gray-700">Surname</label>
+                  <input id="lead-last-name" name="lastName" type="text" autocomplete="family-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div class="md:col-span-2">
+                  <label for="lead-company" class="block text-sm font-medium text-gray-700">Company Name</label>
+                  <input id="lead-company" name="company" type="text" autocomplete="organization" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div class="md:col-span-2">
+                  <label for="lead-email" class="block text-sm font-medium text-gray-700">Email</label>
+                  <input id="lead-email" name="email" type="email" autocomplete="email" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                  <p id="lead-error" class="hidden mt-2 text-sm text-red-600">Please complete all fields with a valid email.</p>
+                </div>
+              </div>
+
+              <div class="mt-6 flex flex-col md:flex-row gap-3">
+                <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold text-white transition" style="background-color:#286140;" onmouseover="this.style.backgroundColor='#214f33'" onmouseout="this.style.backgroundColor='#286140'">
+                  View Results
+                </button>
+                <button type="button" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition" onclick="closeEmailGate()">
+                  Not now
+                </button>
+              </div>
+
+              <p class="mt-4 text-xs text-gray-500">
+                By continuing, you agree we may contact you about your permit requirements.
+              </p>
+            </form>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -411,7 +466,7 @@
       </div>
 
       <!-- CTA -->
-      <div class="bg-gradient-to-r from-green-500 to-green-600 rounded-lg shadow-lg p-8 text-white mb-8">
+      <div class="rounded-lg shadow-lg p-8 text-white mb-8" style="background-color:#286140;">
         <h2 class="text-2xl font-bold mb-4">💡 Mobile Culinaire Simplifies This Process</h2>
         <p class="mb-4">We handle the complexity for you:</p>
         <ul class="list-disc list-inside mb-6 space-y-2">
@@ -784,7 +839,14 @@
       seating: false,
       auxiliaryStorage: false,
       temporaryEvents: false,
-      determinedClass: null
+      determinedClass: null,
+      leadCaptured: false,
+      lead: {
+        firstName: '',
+        lastName: '',
+        company: '',
+        email: ''
+      }
     };
 
     // Menu options mapping
@@ -809,7 +871,7 @@
 
       // Initialize
       document.addEventListener('DOMContentLoaded', function() {
-        // Dropdown toggles will be set up after results are generated
+        setupEmailGate();
       });
 
     // Determine class from menu selection
@@ -835,7 +897,83 @@
       return true;
     }
 
-    // Generate results
+    // ---------- EMAIL GATE ----------
+    let _pendingResults = null;
+
+    function openEmailGate() {
+      const gate = document.getElementById('email-gate');
+      if (!gate) return;
+      gate.classList.remove('hidden');
+      gate.setAttribute('aria-hidden', 'false');
+
+      // Ensure gate is visible at the top of the viewport (no scrolling needed)
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Focus first input for accessibility
+      setTimeout(() => {
+        const first = document.getElementById('lead-first-name');
+        if (first) first.focus();
+      }, 50);
+    }
+
+    function closeEmailGate() {
+      const gate = document.getElementById('email-gate');
+      if (!gate) return;
+      gate.classList.add('hidden');
+      gate.setAttribute('aria-hidden', 'true');
+      const err = document.getElementById('lead-error');
+      if (err) err.classList.add('hidden');
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+    }
+
+    function setupEmailGate() {
+      const form = document.getElementById('email-gate-form');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const firstName = document.getElementById('lead-first-name')?.value?.trim() || '';
+        const lastName = document.getElementById('lead-last-name')?.value?.trim() || '';
+        const company = document.getElementById('lead-company')?.value?.trim() || '';
+        const email = document.getElementById('lead-email')?.value?.trim() || '';
+
+        const ok = firstName && lastName && company && isValidEmail(email);
+        const err = document.getElementById('lead-error');
+        if (!ok) {
+          if (err) err.classList.remove('hidden');
+          return;
+        }
+
+        if (err) err.classList.add('hidden');
+
+        appState.leadCaptured = true;
+        appState.lead = { firstName, lastName, company, email };
+
+        // TODO (optional): send lead to your CRM endpoint here
+
+        closeEmailGate();
+
+        if (_pendingResults) {
+          const fn = _pendingResults;
+          _pendingResults = null;
+          fn();
+        }
+      });
+
+      // Basic ESC-to-close
+      document.addEventListener('keydown', function (e) {
+        const gate = document.getElementById('email-gate');
+        if (e.key === 'Escape' && gate && !gate.classList.contains('hidden')) {
+          closeEmailGate();
+        }
+      });
+    }
+
+    // Generate results (runs validation + gate, then shows results)
     function generateResults() {
       if (!validateForm()) return;
       
@@ -848,20 +986,31 @@
       appState.temporaryEvents = document.getElementById('temp-events').checked;
       appState.determinedClass = determineClass(appState.menuSelection);
       
-      // Hide form, show results
-      document.getElementById('form-section').style.display = 'none';
-      document.getElementById('results-section').style.display = 'block';
-      
-      // Populate results
-      populateClassHeader();
-      populateRequirementsTable();
-      populateTemperatureSection();
-      populateComplianceNotes();
-      populateContacts();
-      populateChecklist();
-      
-      // Scroll to top
-      window.scrollTo(0, 0);
+      const showResults = () => {
+        // Hide form, show results
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('results-section').style.display = 'block';
+
+        // Populate results
+        populateClassHeader();
+        populateRequirementsTable();
+        populateTemperatureSection();
+        populateComplianceNotes();
+        populateContacts();
+        populateChecklist();
+
+        // Ensure results are visible at top (important after gate)
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      };
+
+      // Gate results behind lead capture (only once per session)
+      if (!appState.leadCaptured) {
+        _pendingResults = showResults;
+        openEmailGate();
+        return;
+      }
+
+      showResults();
     }
 
     // Populate class header
@@ -925,7 +1074,7 @@
       
       document.getElementById('class-header').innerHTML = `
         <h2 class="text-2xl font-bold mb-4">Your Mobile Kitchen Classification</h2>
-        <div class="text-4xl font-bold text-blue-600 mb-4">CLASS ${classNum} MOBILE FOOD UNIT</div>
+        <div class="text-4xl font-bold mb-4" style="color:#286140;">CLASS ${classNum} MOBILE FOOD UNIT</div>
         <div class="space-y-4">
           <div>
             <h3 class="font-semibold mb-2">Why this class?</h3>
