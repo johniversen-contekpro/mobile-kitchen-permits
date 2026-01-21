@@ -21,6 +21,15 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      padding-bottom: 2rem;
+      background-color: transparent;
+      margin: 0;
+    }
+    
+    /* Allow parent container to control background */
+    body.oregon-tool-standalone {
+      background-color: #f9fafb;
     }
 
     .contact-separator {
@@ -129,25 +138,105 @@
     .dropdown-icon.expanded {
       transform: rotate(180deg);
     }
+
+    /* Container styling - flexible for Webflow integration */
+    .oregon-tool-container {
+      max-width: 72rem;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      padding-bottom: 4rem;
+    }
+
+    @media (max-width: 768px) {
+      .oregon-tool-container {
+        padding: 1.5rem 1rem;
+        padding-bottom: 3rem;
+      }
+    }
+
+    /* Make form cards blend with Webflow styling */
+    .oregon-tool-form-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .oregon-tool-form-card {
+        padding: 2rem;
+      }
+    }
+
+    /* Header styling to match Webflow patterns */
+    .oregon-tool-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .oregon-tool-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 768px) {
+      .oregon-tool-title {
+        font-size: 2.25rem;
+      }
+    }
+
+    .oregon-tool-subtitle {
+      font-size: 1.125rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* Button styling to match Webflow */
+    .oregon-tool-button {
+      width: 100%;
+      color: white;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1.125rem;
+      transition: background-color 0.3s ease;
+      border: none;
+      cursor: pointer;
+      background-color: #286140;
+    }
+
+    .oregon-tool-button:hover {
+      background-color: #214f33;
+    }
+
+    .oregon-tool-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(40, 97, 64, 0.3);
+    }
   </style>
 </head>
-<body class="bg-gray-50">
-  <div class="container mx-auto px-4 py-8 max-w-6xl">
+<body class="oregon-tool-standalone">
+  <div class="oregon-tool-container">
     
     <!-- FORM SECTION -->
     <div id="form-section">
       <!-- Header -->
-      <div class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+      <div class="oregon-tool-header">
+        <div class="oregon-tool-title">
           Oregon Mobile Kitchen Permit Finder
-        </h1>
-        <p class="text-lg text-gray-600">
+        </div>
+        <p class="oregon-tool-subtitle">
           Find your required permits and contacts
         </p>
       </div>
 
       <!-- Form Card -->
-      <div class="bg-white rounded-lg shadow-lg p-6 md:p-8 mb-8">
+      <div class="oregon-tool-form-card">
         
         <!-- Question 1: Menu Selection -->
         <div class="mb-8">
@@ -278,7 +367,7 @@
         </div>
 
         <!-- Submit Button -->
-        <button onclick="generateResults()" class="w-full text-white font-semibold py-4 px-6 rounded-lg text-lg transition" style="background-color:#286140;" onmouseover="this.style.backgroundColor='#214f33'" onmouseout="this.style.backgroundColor='#286140'">
+        <button onclick="generateResults()" class="oregon-tool-button">
           See Requirements & Contacts
         </button>
       </div>
@@ -467,22 +556,31 @@
 
       <!-- CTA -->
       <div class="rounded-lg shadow-lg p-8 text-white mb-8" style="background-color:#286140;">
-        <h2 class="text-2xl font-bold mb-4">Mobile Culinaire: Pre-Approved Mobile Kitchen Ready to Operate</h2>
-        <p class="mb-4">Start serving in days, not weeks:</p>
-        <ul class="list-disc list-inside mb-6 space-y-2">
-          <li>Pre-approved mobile kitchen trailers for all 36 Oregon counties</li>
-          <li>Meet all Oregon health department specifications</li>
-          <li>Fire marshal inspection-ready equipment and design</li>
-          <li>Complete documentation packages included</li>
-        </ul>
-        <p class="mb-6 font-semibold">Skip the 4-6 week permit process. Operational in one day.</p>
-        <div class="space-y-3">
-          <a href="https://www.mobileculinaire.com/mobile-kitchen" target="_blank" class="inline-block w-full md:w-auto bg-white text-green-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition text-center">
-            Browse Pre-Approved Oregon Trailers
-          </a>
-          <a href="https://www.mobileculinaire.com/contact" target="_blank" class="inline-block w-full md:w-auto ml-0 md:ml-3 bg-transparent border-2 border-white text-white font-semibold py-3 px-6 rounded-lg hover:bg-white hover:text-green-600 transition text-center">
-            Request a Quote
-          </a>
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+          <!-- Content Section -->
+          <div class="flex-1 w-full md:w-auto">
+            <h2 class="text-2xl font-bold mb-4">Mobile Culinaire: Code Compliant Mobile Kitchens Ready to Operate</h2>
+            <p class="mb-4">Start serving in days, not weeks:</p>
+            <ul class="list-disc list-inside mb-6 space-y-2">
+              <li>Code Compliant mobile kitchen trailers for all 36 Oregon counties</li>
+              <li>Meet all Oregon health department specifications</li>
+              <li>Fire marshal inspection-ready equipment and design</li>
+              <li>Complete documentation packages included</li>
+            </ul>
+            <p class="mb-6 font-semibold">Operational in one day.</p>
+            <div class="space-y-3">
+              <a href="https://www.mobileculinaire.com/mobile-kitchen" target="_blank" class="inline-block w-full md:w-auto bg-white text-green-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition text-center">
+                See models
+              </a>
+              <a href="https://www.mobileculinaire.com/contact" target="_blank" class="inline-block w-full md:w-auto ml-0 md:ml-3 bg-transparent border-2 border-white text-white font-semibold py-3 px-6 rounded-lg hover:bg-white hover:text-green-600 transition text-center">
+                Request a Quote
+              </a>
+            </div>
+          </div>
+          <!-- Image Section -->
+          <div class="w-full md:w-auto flex-shrink-0 md:flex-shrink">
+            <img src="webflow card (2 sec).gif" alt="Mobile Culinaire mobile kitchen" class="w-full md:w-auto max-w-full md:max-w-xs h-auto rounded-lg">
+          </div>
         </div>
       </div>
 
