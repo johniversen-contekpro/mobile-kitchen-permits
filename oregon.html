@@ -23,7 +23,7 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
       height: auto;
       min-height: auto;
-      padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
+      padding-bottom: 1rem; /* Base padding, will be adjusted dynamically */
       transition: padding-bottom 0.3s ease;
       margin: 0;
       background-color: transparent;
@@ -157,8 +157,8 @@
       width: 100%;
       margin: 0 auto;
       padding: 2rem 1rem;
-      padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
-      margin-bottom: 1rem;
+      padding-bottom: 1rem; /* Base padding, will be adjusted dynamically */
+      margin-bottom: 0.5rem;
       height: auto;
       min-height: auto;
       box-sizing: border-box;
@@ -168,8 +168,8 @@
     @media (max-width: 768px) {
       .oregon-tool-container {
         padding: 1.5rem 1rem;
-        padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
-        margin-bottom: 1rem;
+        padding-bottom: 1rem; /* Base padding, will be adjusted dynamically */
+        margin-bottom: 0.5rem;
       }
     }
 
@@ -989,8 +989,8 @@
         const resultsSection = document.getElementById('results-section');
         if (!resultsSection || resultsSection.style.display === 'none') {
           // Reset to base padding when form is shown
-          container.style.paddingBottom = '2rem';
-          document.body.style.paddingBottom = '2rem';
+          container.style.paddingBottom = '1rem';
+          document.body.style.paddingBottom = '1rem';
           return;
         }
 
@@ -1007,20 +1007,20 @@
           }
         });
 
-        // Base padding (conservative)
-        const basePadding = 2; // rem
-        // Additional padding based on expanded content (1rem per 300px of content)
-        const additionalPadding = Math.ceil(totalExpandedHeight / 300);
-        // Minimum extra padding when dropdowns are expanded
-        const minExtraPadding = expandedCount > 0 ? 2 : 0;
+        // Base padding (minimal)
+        const basePadding = 1.5; // rem
+        // Additional padding based on expanded content (1rem per 600px - very conservative)
+        const additionalPadding = Math.ceil(totalExpandedHeight / 600) * 0.5;
+        // Small extra padding when dropdowns are expanded
+        const minExtraPadding = expandedCount > 0 ? 1 : 0;
         // Maximum padding to prevent excessive spacing
-        const maxPadding = window.innerWidth <= 768 ? 10 : 12; // rem
+        const maxPadding = window.innerWidth <= 768 ? 6 : 8; // rem
         
         const finalPadding = Math.min(basePadding + additionalPadding + minExtraPadding, maxPadding);
         container.style.paddingBottom = finalPadding + 'rem';
         
         // Add minimal body padding
-        document.body.style.paddingBottom = Math.max(finalPadding * 0.3, 2) + 'rem';
+        document.body.style.paddingBottom = Math.max(finalPadding * 0.2, 1) + 'rem';
       }
 
       function resizeIframe() {
