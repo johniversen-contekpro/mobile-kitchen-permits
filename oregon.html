@@ -23,7 +23,8 @@
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
       height: auto;
       min-height: auto;
-      padding-bottom: 8rem;
+      padding-bottom: 4rem; /* Base padding, will be adjusted dynamically */
+      transition: padding-bottom 0.3s ease;
       margin: 0;
       background-color: transparent;
       overflow-x: hidden;
@@ -989,6 +990,7 @@
         if (!resultsSection || resultsSection.style.display === 'none') {
           // Reset to base padding when form is shown
           container.style.paddingBottom = window.innerWidth <= 768 ? '3rem' : '4rem';
+          document.body.style.paddingBottom = '4rem';
           return;
         }
 
@@ -996,42 +998,56 @@
         const expandedDropdowns = document.querySelectorAll('.dropdown-content.expanded');
         const expandedCount = expandedDropdowns.length;
 
-        // Calculate total height of expanded content
+        // Calculate total height of expanded content more accurately
         let totalExpandedHeight = 0;
         expandedDropdowns.forEach(dropdown => {
           const contentInner = dropdown.querySelector('.dropdown-content-inner');
           if (contentInner) {
-            totalExpandedHeight += contentInner.scrollHeight;
+            // Get the full scrollHeight including margins
+            const rect = contentInner.getBoundingClientRect();
+            totalExpandedHeight += Math.max(contentInner.scrollHeight, rect.height);
           }
         });
 
         // Base padding
-        const basePadding = window.innerWidth <= 768 ? 3 : 4; // rem
-        // Additional padding based on expanded content (roughly 1rem per 200px of content)
-        const additionalPadding = Math.ceil(totalExpandedHeight / 200) * 1;
-        // Minimum extra padding when dropdowns are expanded
-        const minExtraPadding = expandedCount > 0 ? 2 : 0;
-        // Maximum padding to prevent excessive spacing
-        const maxPadding = window.innerWidth <= 768 ? 12 : 15; // rem
+        const basePadding = window.innerWidth <= 768 ? 4 : 5; // rem (increased)
+        // Additional padding based on expanded content (more generous: 1rem per 150px)
+        const additionalPadding = Math.ceil(totalExpandedHeight / 150) * 1;
+        // Minimum extra padding when dropdowns are expanded (increased)
+        const minExtraPadding = expandedCount > 0 ? 4 : 0;
+        // Maximum padding increased to prevent cropping
+        const maxPadding = window.innerWidth <= 768 ? 20 : 25; // rem
         
         const finalPadding = Math.min(basePadding + additionalPadding + minExtraPadding, maxPadding);
         container.style.paddingBottom = finalPadding + 'rem';
+        
+        // Also add body padding as extra safety
+        document.body.style.paddingBottom = Math.max(finalPadding * 0.5, 4) + 'rem';
       }
 
       function resizeIframe() {
         // Adjust padding first
-        adjustDynamicPadding();
+        if (typeof window.adjustDynamicPadding === 'function') {
+          window.adjustDynamicPadding();
+        }
         
         // Then resize iframe
         if (window.parent !== window) {
-          // Small delay to ensure padding adjustment is applied
+          // Delay to ensure padding adjustment and layout recalculation are applied
           setTimeout(() => {
-            const height = document.body.scrollHeight;
+            // Get the full document height including all padding
+            const bodyHeight = document.body.scrollHeight;
+            const htmlHeight = document.documentElement.scrollHeight;
+            const maxHeight = Math.max(bodyHeight, htmlHeight);
+            
+            // Add extra buffer to prevent cropping
+            const heightWithBuffer = maxHeight + 100;
+            
             window.parent.postMessage({
               type: 'resize',
-              height: height
+              height: heightWithBuffer
             }, '*');
-          }, 50);
+          }, 100);
         }
       }
 
@@ -2524,12 +2540,22 @@
           window.adjustDynamicPadding();
         }
         
-        // Resize iframe after toggle (wait for animation to complete)
+        // Adjust padding again after a short delay (mid-animation)
         setTimeout(function() {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
+        }, 300);
+        
+        // Resize iframe after toggle (wait for full animation to complete - 0.5s + buffer)
+        setTimeout(function() {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
           if (typeof resizeIframe === 'function') {
             resizeIframe();
           }
-        }, 600);
+        }, 800);
       }
     }
   </script>
