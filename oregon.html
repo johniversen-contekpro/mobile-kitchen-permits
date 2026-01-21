@@ -13,7 +13,7 @@
     "@type": "WebApplication",
     "name": "Oregon Mobile Kitchen Permit Requirements Tool",
     "description": "Interactive tool to determine Oregon mobile food unit classification, required permits, and county health department contacts based on menu type and location.",
-    "url": "https://johniversen-contekpro.github.io/mobile-kitchen-permits/oregon.html",
+    "url": "https://yourusername.github.io/permit-checklist/oregon.html",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Any",
     "offers": {
@@ -715,7 +715,7 @@
           </div>
           <!-- Image Section -->
           <div class="w-full md:w-auto" style="flex-shrink: 0; min-width: 0; display: block; visibility: visible;">
-            <img id="cta-image" alt="Mobile Culinaire mobile kitchen" style="display: block !important; visibility: visible !important; width: auto; max-width: 300px; height: auto; border-radius: 0.5rem; object-fit: contain; opacity: 1;">
+            <img id="cta-image" src="webflow card (2 sec).gif" alt="Mobile Culinaire mobile kitchen" style="display: block !important; visibility: visible !important; width: auto; max-width: 300px; height: auto; border-radius: 0.5rem; object-fit: contain; opacity: 1;">
           </div>
         </div>
       </div>
@@ -1259,36 +1259,69 @@
         const img = document.getElementById('cta-image');
         if (!img) return;
         
+        // If image already has a src and loaded successfully, skip
+        if (img.complete && img.naturalHeight !== 0) {
+          return;
+        }
+        
         // Try multiple path variations
         const paths = [
           'webflow card (2 sec).gif',
           './webflow card (2 sec).gif',
+          encodeURIComponent('webflow card (2 sec).gif'),
+          './' + encodeURIComponent('webflow card (2 sec).gif'),
           'webflow%20card%20(2%20sec).gif',
           './webflow%20card%20(2%20sec).gif'
         ];
         
         let currentPathIndex = 0;
+        const originalSrc = img.src || '';
+        
+        // If there's already a src, add it as the first path to try
+        if (originalSrc && !originalSrc.includes('data:')) {
+          currentPathIndex = 0;
+        } else {
+          // Try paths starting from index 0
+        }
         
         function tryNextPath() {
           if (currentPathIndex < paths.length) {
-            img.src = paths[currentPathIndex];
+            const testPath = paths[currentPathIndex];
+            // Only update if different from current src
+            if (img.src !== testPath && (!originalSrc || img.src === originalSrc)) {
+              img.src = testPath;
+            }
             currentPathIndex++;
           } else {
-            console.error('All image paths failed. Image file may not be uploaded to GitHub.');
-            img.style.display = 'none';
+            // If all paths failed and no image loaded, hide it
+            if (!img.complete || img.naturalHeight === 0) {
+              console.warn('CTA image not found. Make sure "webflow card (2 sec).gif" is in the same directory as oregon.html');
+            }
           }
         }
+        
+        // Clear previous error handlers
+        img.onerror = null;
+        img.onload = null;
         
         img.onerror = function() {
           tryNextPath();
         };
         
         img.onload = function() {
-          // Image loaded successfully
+          // Image loaded successfully, ensure it's visible
+          img.style.display = 'block';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
         };
         
-        // Start with first path
-        tryNextPath();
+        // If image already has a src, check if it needs fallback
+        if (img.src && !img.complete) {
+          // Wait for load/error
+        } else if (!img.src || (img.complete && img.naturalHeight === 0)) {
+          // Start trying paths
+          tryNextPath();
+        }
       }
 
     // Determine class from menu selection
@@ -1414,10 +1447,12 @@
         populateContacts();
         populateChecklist();
 
-        // Setup CTA image after results are displayed
+        // Setup CTA image immediately after results section is shown
+        setupCTAImage();
+        // Also try again after a short delay to ensure DOM is ready
         setTimeout(() => {
           setupCTAImage();
-        }, 100);
+        }, 200);
 
         // Adjust padding and resize iframe after content is populated
         setTimeout(() => {
