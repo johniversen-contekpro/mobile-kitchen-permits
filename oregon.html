@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oregon Mobile Kitchen Permit Requirements & Contacts Tool</title>
+  <title>Oregon Mobile Kitchen Permit Requirements | Interactive Permit Tool</title>
+  <meta name="description" content="Get your complete Oregon mobile kitchen permit checklist and county contacts in minutes. Determine your mobile food unit classification, required permits, and health department contacts based on your menu and location.">
   
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -246,10 +247,10 @@
       <!-- Header -->
       <div class="oregon-tool-header">
         <div class="oregon-tool-title">
-          Oregon Mobile Kitchen Permit Finder
+          Oregon Mobile Kitchen Permit Requirements
         </div>
         <p class="oregon-tool-subtitle">
-          Find your required permits and contacts
+          Get your complete permit checklist and county contacts in minutes
         </p>
       </div>
 
@@ -1070,18 +1071,14 @@
                 height: finalHeight
               };
               
-              // Try multiple message formats
+              // Send in two formats: number and object (covers all handler types)
+              window.parent.postMessage(finalHeight, '*');
               window.parent.postMessage(message, '*');
-              window.parent.postMessage(finalHeight, '*'); // Some handlers expect just the number
-              window.parent.postMessage({ height: finalHeight }, '*'); // Alternative format
               
-              // Send again after a short delay to ensure it's received
+              // Retry after short delay to ensure delivery
               setTimeout(() => {
                 window.parent.postMessage(message, '*');
               }, 100);
-              
-              // Debug logging
-              console.log('Iframe resize sent (exact height):', finalHeight, 'px');
             }, 100);
           });
         }
@@ -1166,12 +1163,11 @@
         }
         
         img.onerror = function() {
-          console.log('Image path failed:', this.src, '- Trying next path...');
           tryNextPath();
         };
         
         img.onload = function() {
-          console.log('Image loaded successfully from:', this.src);
+          // Image loaded successfully
         };
         
         // Start with first path
@@ -1256,8 +1252,6 @@
 
         appState.leadCaptured = true;
         appState.lead = { firstName, lastName, company, email };
-
-        // TODO (optional): send lead to your CRM endpoint here
 
         closeEmailGate();
 
@@ -2572,7 +2566,26 @@
     function goBack() {
       document.getElementById('form-section').style.display = 'block';
       document.getElementById('results-section').style.display = 'none';
-      window.scrollTo(0, 0);
+      
+      // Scroll to top - try multiple methods for better compatibility
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      
+      // If in iframe, also scroll parent if possible
+      if (window.parent !== window) {
+        try {
+          window.parent.scrollTo({ top: 0, behavior: 'instant' });
+        } catch (e) {
+          // Cross-origin restriction - can't scroll parent
+        }
+      }
+      
+      // Scroll container if it exists
+      const container = document.querySelector('.oregon-tool-container');
+      if (container) {
+        container.scrollTop = 0;
+      }
     }
 
     // Toggle dropdown (global function)
