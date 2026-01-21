@@ -1034,37 +1034,55 @@
           // Use requestAnimationFrame for better timing with browser layout
           requestAnimationFrame(() => {
             setTimeout(() => {
-              // Get the full document height including all padding
-              const bodyHeight = document.body.scrollHeight;
-              const htmlHeight = document.documentElement.scrollHeight;
+              // Get the exact height of the visible content
+              // Use container height as it represents the actual tool content
               const container = document.querySelector('.oregon-tool-container');
-              const containerHeight = container ? container.scrollHeight + container.offsetTop : 0;
+              let exactHeight = 0;
               
-              // Use the maximum of all height measurements
-              const maxHeight = Math.max(bodyHeight, htmlHeight, containerHeight);
+              if (container) {
+                // Get the bottom position of the container including its padding
+                const containerRect = container.getBoundingClientRect();
+                const containerBottom = containerRect.bottom;
+                
+                // Get the top offset of the container from document
+                const containerTop = container.offsetTop;
+                
+                // Calculate exact height: container bottom - container top
+                exactHeight = containerBottom - containerTop + window.scrollY;
+                
+                // Fallback: use scrollHeight if bounding rect calculation fails
+                if (exactHeight <= 0) {
+                  exactHeight = container.scrollHeight + containerTop;
+                }
+              } else {
+                // Fallback to body/html height if container not found
+                const bodyHeight = document.body.scrollHeight;
+                const htmlHeight = document.documentElement.scrollHeight;
+                exactHeight = Math.max(bodyHeight, htmlHeight);
+              }
               
-              // Add moderate buffer to prevent cropping
-              const heightWithBuffer = maxHeight + 50;
+              // Use exact height - no buffer, embed code will handle it
+              const finalHeight = Math.ceil(exactHeight);
               
               // Send resize message in multiple formats for compatibility
               const message = {
                 type: 'resize',
-                height: heightWithBuffer
+                height: finalHeight
               };
               
               // Try multiple message formats
               window.parent.postMessage(message, '*');
-              window.parent.postMessage(heightWithBuffer, '*'); // Some handlers expect just the number
-              window.parent.postMessage({ height: heightWithBuffer }, '*'); // Alternative format
+              window.parent.postMessage(finalHeight, '*'); // Some handlers expect just the number
+              window.parent.postMessage({ height: finalHeight }, '*'); // Alternative format
               
               // Send again after a short delay to ensure it's received
               setTimeout(() => {
                 window.parent.postMessage(message, '*');
-              }, 200);
+              }, 100);
               
-              // Debug logging (remove in production if desired)
-              console.log('Iframe resize sent:', heightWithBuffer, 'px');
-            }, 150);
+              // Debug logging
+              console.log('Iframe resize sent (exact height):', finalHeight, 'px');
+            }, 100);
           });
         }
       }
