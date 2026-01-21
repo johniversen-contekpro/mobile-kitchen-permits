@@ -21,11 +21,13 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
-      min-height: 100vh;
-      padding-bottom: 6rem;
-      margin: 0 0 4rem 0;
+      height: auto;
+      min-height: auto;
+      padding-bottom: 4rem;
+      margin: 0;
       background-color: transparent;
       overflow-x: hidden;
+      overflow-y: visible;
     }
     
     /* Allow parent container to control background */
@@ -117,19 +119,96 @@
       background-color: #e5e7eb;
     }
 
+    /* Specific background colors for each section type */
+    .dropdown-header[data-section="requirements"] {
+      background-color: #dbeafe;
+    }
+
+    .dropdown-header[data-section="requirements"]:hover {
+      background-color: #bfdbfe;
+    }
+
+    .dropdown-header[data-section="requirements"].expanded {
+      background-color: white;
+    }
+
+    .dropdown-header[data-section="temperature"] {
+      background-color: #fef3c7;
+    }
+
+    .dropdown-header[data-section="temperature"]:hover {
+      background-color: #fde68a;
+    }
+
+    .dropdown-header[data-section="temperature"].expanded {
+      background-color: white;
+    }
+
+    .dropdown-header[data-section="compliance"] {
+      background-color: #fee2e2;
+    }
+
+    .dropdown-header[data-section="compliance"]:hover {
+      background-color: #fecaca;
+    }
+
+    .dropdown-header[data-section="compliance"].expanded {
+      background-color: white;
+    }
+
+    .dropdown-header[data-section="contacts"] {
+      background-color: #e0e7ff;
+    }
+
+    .dropdown-header[data-section="contacts"]:hover {
+      background-color: #c7d2fe;
+    }
+
+    .dropdown-header[data-section="contacts"].expanded {
+      background-color: white;
+    }
+
+    .dropdown-header[data-section="checklist"] {
+      background-color: #d1fae5;
+    }
+
+    .dropdown-header[data-section="checklist"]:hover {
+      background-color: #a7f3d0;
+    }
+
+    .dropdown-header[data-section="checklist"].expanded {
+      background-color: white;
+    }
+
+    .dropdown-header[data-section="faq"] {
+      background-color: #f3e8ff;
+    }
+
+    .dropdown-header[data-section="faq"]:hover {
+      background-color: #e9d5ff;
+    }
+
+    .dropdown-header[data-section="faq"].expanded {
+      background-color: white;
+    }
+
     .dropdown-content {
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease-out;
+      background-color: white;
     }
 
     .dropdown-content.expanded {
-      max-height: 10000px;
+      max-height: none;
+      height: auto;
       transition: max-height 0.5s ease-in;
+      background-color: white;
     }
 
     .dropdown-content-inner {
       padding: 1.5rem;
+      background-color: white;
     }
 
     .dropdown-icon {
@@ -146,16 +225,18 @@
       width: 100%;
       margin: 0 auto;
       padding: 2rem 1rem;
-      padding-bottom: 8rem;
-      margin-bottom: 4rem;
-      min-height: 100vh;
+      padding-bottom: 6rem;
+      margin-bottom: 2rem;
+      height: auto;
+      min-height: auto;
+      box-sizing: border-box;
     }
 
     @media (max-width: 768px) {
       .oregon-tool-container {
         padding: 1.5rem 1rem;
-        padding-bottom: 6rem;
-        margin-bottom: 3rem;
+        padding-bottom: 4rem;
+        margin-bottom: 2rem;
       }
     }
 
@@ -460,7 +541,7 @@
         <div class="space-y-4">
           <!-- FAQ 1 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-1')" id="faq-header-1">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-1')" id="faq-header-1">
               <span>Do I need different permits if I only operate temporarily?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -475,7 +556,7 @@
 
           <!-- FAQ 2 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-2')" id="faq-header-2">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-2')" id="faq-header-2">
               <span>I only need the trailer for one 3-day event. Do I still need the full Class IV license?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -490,7 +571,7 @@
 
           <!-- FAQ 3 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-3')" id="faq-header-3">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-3')" id="faq-header-3">
               <span>Can I use my license for multiple events?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -505,7 +586,7 @@
 
           <!-- FAQ 4 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-4')" id="faq-header-4">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-4')" id="faq-header-4">
               <span>What's the difference between my Class IV license and a TRF?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -520,7 +601,7 @@
 
           <!-- FAQ 5 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-5')" id="faq-header-5">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-5')" id="faq-header-5">
               <span>How much does it cost?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -543,7 +624,7 @@
 
           <!-- FAQ 6 -->
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('faq-header-6')" id="faq-header-6">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-6')" id="faq-header-6">
               <span>Can Mobile Culinaire handle all of this for me?</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -966,10 +1047,45 @@
       }
     };
 
+      // Resize iframe to match content height (for Webflow embedding)
+      function resizeIframe() {
+        if (window.parent !== window) {
+          const height = document.body.scrollHeight;
+          window.parent.postMessage({
+            type: 'resize',
+            height: height
+          }, '*');
+        }
+      }
+
+      // Resize on content changes
+      function observeContentChanges() {
+        const observer = new MutationObserver(function(mutations) {
+          resizeIframe();
+        });
+
+        const container = document.querySelector('.oregon-tool-container');
+        if (container) {
+          observer.observe(container, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+          });
+        }
+
+        // Also resize on window resize
+        window.addEventListener('resize', resizeIframe);
+      }
+
       // Initialize
       document.addEventListener('DOMContentLoaded', function() {
         setupEmailGate();
         setupCTAImage();
+        setTimeout(function() {
+          resizeIframe();
+          observeContentChanges();
+        }, 100);
       });
 
       // Setup CTA image with proper path handling
@@ -1140,6 +1256,11 @@
           setupCTAImage();
         }, 100);
 
+        // Resize iframe after content is populated
+        setTimeout(() => {
+          resizeIframe();
+        }, 500);
+
         // Ensure results are visible at top (important after gate)
         window.scrollTo({ top: 0, behavior: 'instant' });
       };
@@ -1240,7 +1361,7 @@
       if (classNum === 'I') {
         tableHTML = `
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('req-header-I')" id="req-header-I">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-I')" id="req-header-I">
               <span>📊 YOUR CLASS I REQUIREMENTS</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -1300,7 +1421,7 @@
       } else if (classNum === 'II') {
         tableHTML = `
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('req-header-II')" id="req-header-II">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-II')" id="req-header-II">
               <span>📊 YOUR CLASS II REQUIREMENTS</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -1375,7 +1496,7 @@
       } else if (classNum === 'III') {
         tableHTML = `
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('req-header-III')" id="req-header-III">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-III')" id="req-header-III">
               <span>📊 YOUR CLASS III REQUIREMENTS</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -1455,7 +1576,7 @@
       } else if (classNum === 'IV') {
         tableHTML = `
           <div class="dropdown-section">
-            <div class="dropdown-header" onclick="toggleDropdown('req-header-IV')" id="req-header-IV">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-IV')" id="req-header-IV">
               <span>📊 YOUR CLASS IV REQUIREMENTS</span>
               <span class="dropdown-icon">▼</span>
             </div>
@@ -1565,7 +1686,7 @@
       
       document.getElementById('temperature-section').innerHTML = `
         <div class="dropdown-section">
-          <div class="dropdown-header" onclick="toggleDropdown('temp-header')" id="temp-header">
+          <div class="dropdown-header" data-section="temperature" onclick="toggleDropdown('temp-header')" id="temp-header">
             <span>🌡️ REQUIRED FOOD TEMPERATURES</span>
             <span class="dropdown-icon">▼</span>
           </div>
@@ -1614,7 +1735,7 @@
     function populateComplianceNotes() {
       document.getElementById('compliance-section').innerHTML = `
         <div class="dropdown-section">
-          <div class="dropdown-header" onclick="toggleDropdown('compliance-header')" id="compliance-header">
+          <div class="dropdown-header" data-section="compliance" onclick="toggleDropdown('compliance-header')" id="compliance-header">
             <span>⚠️ CRITICAL COMPLIANCE REQUIREMENTS</span>
             <span class="dropdown-icon">▼</span>
           </div>
@@ -1674,7 +1795,7 @@
       const classNum = appState.determinedClass;
       let contactsHTML = `
         <div class="dropdown-section">
-          <div class="dropdown-header" onclick="toggleDropdown('contacts-header')" id="contacts-header">
+          <div class="dropdown-header" data-section="contacts" onclick="toggleDropdown('contacts-header')" id="contacts-header">
             <span>📞 YOUR REQUIRED PERMITS & CONTACTS</span>
             <span class="dropdown-icon">▼</span>
           </div>
@@ -2247,7 +2368,7 @@
       let stepNum = 1;
       let checklistHTML = `
         <div class="dropdown-section">
-          <div class="dropdown-header" onclick="toggleDropdown('checklist-header')" id="checklist-header">
+          <div class="dropdown-header" data-section="checklist" onclick="toggleDropdown('checklist-header')" id="checklist-header">
             <span>📋 YOUR COMPLETE PERMIT CHECKLIST</span>
             <span class="dropdown-icon">▼</span>
           </div>
@@ -2407,8 +2528,17 @@
       const icon = header.querySelector('.dropdown-icon');
       
       if (content && icon) {
+        const isExpanded = content.classList.contains('expanded');
         content.classList.toggle('expanded');
         icon.classList.toggle('expanded');
+        header.classList.toggle('expanded');
+        
+        // Resize iframe after toggle
+        setTimeout(function() {
+          if (typeof resizeIframe === 'function') {
+            resizeIframe();
+          }
+        }, 350);
       }
     }
   </script>
