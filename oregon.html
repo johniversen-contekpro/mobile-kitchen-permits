@@ -1,162 +1,2598 @@
-<!-- 
-  WEBFLOW EMBED TEMPLATE (UPDATED)
-  Copy this code into your Webflow Embed element on the Collection Template page
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oregon Mobile Kitchen Permit Requirements & Contacts Tool</title>
   
-  IMPORTANT: In Webflow, use the field slugs directly (e.g., tool-url, tool-slug)
-  Webflow will automatically replace them with the actual values.
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   
-  CMS Fields Required:
-  - tool-url (Plain Text field) - The hosted HTML file URL
-  - tool-slug (Plain Text field) - URL-friendly identifier (optional for resize, but useful for multiple tools)
--->
+  <style>
+    :root {
+      --primary-blue: #2563eb;
+      --primary-green: #10b981;
+      --warning-amber: #f59e0b;
+      --danger-red: #ef4444;
+      --neutral-gray: #6b7280;
+      --light-gray: #f3f4f6;
+      --border-gray: #e5e7eb;
+    }
 
-<div class="tool-wrapper" style="width: 100%; min-height: 600px; position: relative; overflow: visible;">
-  <iframe 
-    id="tool-iframe-{{wf {&quot;path&quot;:&quot;slug&quot;,&quot;type&quot;:&quot;PlainText&quot;\} }}"
-    src="{{wf {&quot;path&quot;:&quot;github-url&quot;,&quot;type&quot;:&quot;PlainText&quot;\} }}" 
-    width="100%" 
-    frameborder="0"
-    style="border: none; width: 100%; min-height: 600px; display: block;"
-    scrolling="no">
-  </iframe>
-</div>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+      height: auto;
+      min-height: auto;
+      padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
+      transition: padding-bottom 0.3s ease;
+      margin: 0;
+      background-color: transparent;
+      overflow-x: hidden;
+      overflow-y: visible;
+    }
+    
+    /* Allow parent container to control background */
+    body.oregon-tool-standalone {
+      background-color: #edf5f3;
+    }
 
-<script>
-(function() {
-  'use strict';
-  
-  // Get the iframe element
-  const iframe = document.getElementById('tool-iframe-{{wf {&quot;path&quot;:&quot;slug&quot;,&quot;type&quot;:&quot;PlainText&quot;\} }}');
-  if (!iframe) return;
-  
-  const toolSlug = '[tool-slug]';
-  
-  // Function to resize the iframe
-  function resizeIframe(height) {
-    if (height && height > 0) {
-      iframe.style.height = height + 'px';
-      iframe.style.minHeight = height + 'px';
-      iframe.style.maxHeight = 'none';
-      console.log('Tool iframe resized to:', height, 'px');
+    .contact-separator {
+      border-top: 1px solid var(--border-gray);
+      margin: 2rem 0;
     }
-  }
-  
-  // Set initial height
-  resizeIframe(600);
-  
-  // Listen for resize messages from iframe (handles multiple message formats)
-  window.addEventListener('message', function(event) {
-    // Optional: Verify origin for security
-    // Replace with your GitHub Pages domain if needed
-    // if (event.origin !== 'https://yourusername.github.io') return;
-    
-    // Handle different message formats that the tool might send
-    let height = null;
-    
-    // Format 1: Just a number (height value)
-    if (typeof event.data === 'number' && event.data > 0) {
-      height = event.data;
+
+    .requirements-table {
+      width: 100%;
+      border-collapse: collapse;
     }
-    // Format 2: Object with type 'resize'
-    else if (event.data && typeof event.data === 'object') {
-      if (event.data.type === 'resize' && event.data.height) {
-        height = event.data.height;
+
+    .requirements-table th,
+    .requirements-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-gray);
+    }
+
+    .requirements-table th {
+      background-color: var(--light-gray);
+      font-weight: 600;
+    }
+
+    .requirements-table tr:hover {
+      background-color: #f9fafb;
+    }
+
+    @media (max-width: 768px) {
+      .requirements-table {
+        display: block;
       }
-      // Format 3: Object with just 'height' property
-      else if (event.data.height) {
-        height = event.data.height;
+      
+      .requirements-table thead {
+        display: none;
       }
-      // Format 4: Legacy format with 'tool-resize' type and slug
-      else if (event.data.type === 'tool-resize' && event.data.height) {
-        // Check slug if provided, otherwise accept any
-        if (!event.data.slug || event.data.slug === toolSlug) {
-          height = event.data.height;
-        }
+      
+      .requirements-table tbody,
+      .requirements-table tr,
+      .requirements-table td {
+        display: block;
+        width: 100%;
+      }
+      
+      .requirements-table tr {
+        margin-bottom: 1rem;
+        border: 1px solid var(--border-gray);
+        border-radius: 8px;
+        padding: 1rem;
+      }
+      
+      .requirements-table td {
+        border: none;
+        padding: 0.5rem 0;
+      }
+      
+      .requirements-table td:before {
+        content: attr(data-label) ": ";
+        font-weight: 600;
+        display: inline-block;
+        width: 40%;
       }
     }
+
+    .dropdown-section {
+      border: 1px solid var(--border-gray);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .dropdown-header {
+      background-color: white;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-header:hover {
+      background-color: #f9fafb;
+    }
+
+    .dropdown-header.expanded {
+      background-color: white;
+    }
+
+    .dropdown-content {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      background-color: white;
+    }
+
+    .dropdown-content.expanded {
+      max-height: none;
+      height: auto;
+      transition: max-height 0.5s ease-in;
+      background-color: white;
+    }
+
+    .dropdown-content-inner {
+      padding: 1.5rem;
+      background-color: white;
+    }
+
+    .dropdown-icon {
+      transition: transform 0.3s;
+    }
+
+    .dropdown-icon.expanded {
+      transform: rotate(180deg);
+    }
+
+    /* Container styling - flexible for Webflow integration */
+    .oregon-tool-container {
+      max-width: 72rem;
+      width: 100%;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
+      margin-bottom: 1rem;
+      height: auto;
+      min-height: auto;
+      box-sizing: border-box;
+      transition: padding-bottom 0.3s ease;
+    }
+
+    @media (max-width: 768px) {
+      .oregon-tool-container {
+        padding: 1.5rem 1rem;
+        padding-bottom: 2rem; /* Base padding, will be adjusted dynamically */
+        margin-bottom: 1rem;
+      }
+    }
+
+    /* Make form cards blend with Webflow styling */
+    .oregon-tool-form-card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (min-width: 768px) {
+      .oregon-tool-form-card {
+        padding: 2rem;
+      }
+    }
+
+    /* Header styling to match Webflow patterns */
+    .oregon-tool-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .oregon-tool-title {
+      font-size: 1.875rem;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    @media (min-width: 768px) {
+      .oregon-tool-title {
+        font-size: 2.25rem;
+      }
+    }
+
+    .oregon-tool-subtitle {
+      font-size: 1.125rem;
+      color: #4b5563;
+      line-height: 1.6;
+    }
+
+    /* Button styling to match Webflow */
+    .oregon-tool-button {
+      width: 100%;
+      color: white;
+      font-weight: 600;
+      padding: 1rem 1.5rem;
+      border-radius: 0.5rem;
+      font-size: 1.125rem;
+      transition: background-color 0.3s ease;
+      border: none;
+      cursor: pointer;
+      background-color: #286140;
+    }
+
+    .oregon-tool-button:hover {
+      background-color: #214f33;
+    }
+
+    .oregon-tool-button:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(40, 97, 64, 0.3);
+    }
+  </style>
+</head>
+<body class="oregon-tool-standalone">
+  <div class="oregon-tool-container">
     
-    // Apply the height if we got a valid value
-    if (height) {
-      resizeIframe(height);
-    }
-  });
-  
-  // Try to resize on iframe load (works for same-origin only)
-  iframe.addEventListener('load', function() {
-    // Request initial resize after a delay
-    setTimeout(function() {
-      try {
-        // Try direct access (same-origin)
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (iframeDoc && iframeDoc.body) {
-          const height = Math.max(
-            iframeDoc.body.scrollHeight,
-            iframeDoc.documentElement.scrollHeight
-          ) + 50; // Add buffer
-          resizeIframe(height);
-        }
-      } catch (e) {
-        // Cross-origin restriction - will use postMessage instead
-        console.log('Cross-origin iframe - using postMessage for resize');
+    <!-- FORM SECTION -->
+    <div id="form-section">
+      <!-- Header -->
+      <div class="oregon-tool-header">
+        <div class="oregon-tool-title">
+          Oregon Mobile Kitchen Permit Finder
+        </div>
+        <p class="oregon-tool-subtitle">
+          Find your required permits and contacts
+        </p>
+      </div>
+
+      <!-- Form Card -->
+      <div class="oregon-tool-form-card">
         
-        // Request resize from iframe
-        try {
-          iframe.contentWindow.postMessage({ type: 'requestResize' }, '*');
-        } catch (err) {
-          console.log('Could not send resize request to iframe');
+        <!-- Question 1: Menu Selection -->
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold mb-4">What best describes your menu?</h2>
+          <p class="text-sm text-gray-600 mb-4">Select ONE option that best matches your operation</p>
+          
+          <div class="space-y-3">
+            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="radio" name="menu" value="A" class="mt-1 mr-3" required>
+              <div>
+                <div class="font-semibold">Pre-packaged foods only</div>
+                <div class="text-sm text-gray-600 mt-1">
+                  Example: Chips, canned sodas, wrapped sandwiches<br>
+                  No preparation, no cooking
+                </div>
+              </div>
+            </label>
+            
+            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="radio" name="menu" value="B" class="mt-1 mr-3" required>
+              <div>
+                <div class="font-semibold">Hot or cold display foods (unpackaged)</div>
+                <div class="text-sm text-gray-600 mt-1">
+                  Example: Hot dogs in warmer, salads in cold display<br>
+                  No preparation on unit, just holding/serving
+                </div>
+              </div>
+            </label>
+            
+            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="radio" name="menu" value="C" class="mt-1 mr-3" required>
+              <div>
+                <div class="font-semibold">Prepared/assembled foods</div>
+                <div class="text-sm text-gray-600 mt-1">
+                  Example: Sandwiches made on unit, espresso drinks, smoothies<br>
+                  Preparation but NO cooking raw animal products
+                </div>
+              </div>
+            </label>
+            
+            <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="radio" name="menu" value="D" class="mt-1 mr-3" required>
+              <div>
+                <div class="font-semibold">Cooked foods including raw animal products</div>
+                <div class="text-sm text-gray-600 mt-1">
+                  Example: Burgers, chicken, fish, eggs cooked from raw<br>
+                  Full cooking operation
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-200 my-8"></div>
+
+        <!-- Question 2: County Selection -->
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold mb-4">Where will you operate?</h2>
+          <select id="county" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#286140]" required>
+            <option value="default">Select County</option>
+            <option value="Baker">Baker County</option>
+            <option value="Benton">Benton County</option>
+            <option value="Clackamas">Clackamas County</option>
+            <option value="Clatsop">Clatsop County</option>
+            <option value="Columbia">Columbia County</option>
+            <option value="Coos">Coos County</option>
+            <option value="Crook">Crook County</option>
+            <option value="Curry">Curry County</option>
+            <option value="Deschutes">Deschutes County</option>
+            <option value="Douglas">Douglas County</option>
+            <option value="Gilliam">Gilliam County</option>
+            <option value="Grant">Grant County</option>
+            <option value="Harney">Harney County</option>
+            <option value="Hood River">Hood River County</option>
+            <option value="Jackson">Jackson County</option>
+            <option value="Jefferson">Jefferson County</option>
+            <option value="Josephine">Josephine County</option>
+            <option value="Klamath">Klamath County</option>
+            <option value="Lake">Lake County</option>
+            <option value="Lane">Lane County</option>
+            <option value="Lincoln">Lincoln County</option>
+            <option value="Linn">Linn County</option>
+            <option value="Malheur">Malheur County</option>
+            <option value="Marion">Marion County</option>
+            <option value="Morrow">Morrow County</option>
+            <option value="Multnomah">Multnomah County</option>
+            <option value="Polk">Polk County</option>
+            <option value="Sherman">Sherman County</option>
+            <option value="Tillamook">Tillamook County</option>
+            <option value="Umatilla">Umatilla County</option>
+            <option value="Union">Union County</option>
+            <option value="Wallowa">Wallowa County</option>
+            <option value="Wasco">Wasco County</option>
+            <option value="Washington">Washington County</option>
+            <option value="Wheeler">Wheeler County</option>
+            <option value="Yamhill">Yamhill County</option>
+          </select>
+        </div>
+
+        <div class="border-t border-gray-200 my-8"></div>
+
+        <!-- Question 3: Additional Options -->
+        <div class="mb-8">
+          <h2 class="text-xl font-semibold mb-4">Will you have any of these?</h2>
+          <p class="text-sm text-gray-600 mb-4">Select all that apply</p>
+          
+          <div class="space-y-3">
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="checkbox" id="outdoor-cooking" class="mr-3">
+              <span>Outdoor cooking unit (BBQ, pizza oven)</span>
+            </label>
+            
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="checkbox" id="seating" class="mr-3">
+              <span>Customer seating area</span>
+            </label>
+            
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="checkbox" id="auxiliary-storage" class="mr-3">
+              <span>Auxiliary storage (shelves/tables outside unit)</span>
+            </label>
+            
+            <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
+              <input type="checkbox" id="temp-events" class="mr-3">
+              <span>Operating at temporary events (fairs, festivals)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button onclick="generateResults()" class="oregon-tool-button">
+          See Requirements & Contacts
+        </button>
+      </div>
+    </div>
+
+    <!-- EMAIL GATE MODAL (Hidden initially) -->
+    <div id="email-gate" class="fixed inset-0 z-50 hidden" aria-hidden="true">
+      <div class="absolute inset-0 bg-black/50"></div>
+      <div class="relative min-h-full flex items-start justify-center px-4 py-6 md:py-10">
+        <div class="w-full max-w-xl bg-white rounded-xl shadow-2xl overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="email-gate-title">
+          <div class="p-6 md:p-8">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h2 id="email-gate-title" class="text-2xl font-bold text-gray-900">Get your results</h2>
+                <p class="text-gray-600 mt-1">Enter your details to view your personalized permit requirements.</p>
+              </div>
+              <button type="button" class="text-gray-500 hover:text-gray-800" aria-label="Close" onclick="closeEmailGate()">
+                ✕
+              </button>
+            </div>
+
+            <form id="email-gate-form" class="mt-6" novalidate>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="lead-first-name" class="block text-sm font-medium text-gray-700">Name</label>
+                  <input id="lead-first-name" name="firstName" type="text" autocomplete="given-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div>
+                  <label for="lead-last-name" class="block text-sm font-medium text-gray-700">Surname</label>
+                  <input id="lead-last-name" name="lastName" type="text" autocomplete="family-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div class="md:col-span-2">
+                  <label for="lead-company" class="block text-sm font-medium text-gray-700">Company Name</label>
+                  <input id="lead-company" name="company" type="text" autocomplete="organization" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                </div>
+                <div class="md:col-span-2">
+                  <label for="lead-email" class="block text-sm font-medium text-gray-700">Email</label>
+                  <input id="lead-email" name="email" type="email" autocomplete="email" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
+                  <p id="lead-error" class="hidden mt-2 text-sm text-red-600">Please complete all fields with a valid email.</p>
+                </div>
+              </div>
+
+              <div class="mt-6 flex flex-col md:flex-row gap-3">
+                <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold text-white transition" style="background-color:#286140;" onmouseover="this.style.backgroundColor='#214f33'" onmouseout="this.style.backgroundColor='#286140'">
+                  View Results
+                </button>
+                <button type="button" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition" onclick="closeEmailGate()">
+                  Not now
+                </button>
+              </div>
+
+              <p class="mt-4 text-xs text-gray-500">
+                By continuing, you agree we may contact you about your permit requirements.
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTS SECTION (Hidden Initially) -->
+    <div id="results-section" style="display: none;">
+      
+      <!-- Class Header -->
+      <div id="class-header" class="bg-white rounded-lg shadow-lg p-6 md:p-8 mb-8"></div>
+
+      <!-- Requirements Table -->
+      <div id="requirements-table-section" class="mb-8"></div>
+
+      <!-- Temperature Requirements -->
+      <div id="temperature-section" class="mb-8"></div>
+
+      <!-- Compliance Notes -->
+      <div id="compliance-section" class="mb-8"></div>
+
+      <!-- Contacts -->
+      <div id="contacts-section" class="mb-8"></div>
+
+      <!-- Checklist -->
+      <div id="checklist-section" class="mb-8"></div>
+
+      <!-- FAQ Section -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold mb-6">❓ FREQUENTLY ASKED QUESTIONS</h2>
+        
+        <div class="space-y-4">
+          <!-- FAQ 1 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-1')" id="faq-header-1">
+              <span>Do I need different permits if I only operate temporarily?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-1">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700">
+                  A: No. Mobile units with wheels require the same base Class IV license whether operating 1 day per year or 365 days. Oregon does not have a separate "temporary mobile unit" category.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-2')" id="faq-header-2">
+              <span>I only need the trailer for one 3-day event. Do I still need the full Class IV license?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-2">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700">
+                  A: Yes. Any mobile food unit operating in Oregon requires a full mobile unit license with plan review, inspection, and health department approval - regardless of how many days you'll operate. Plan for 6-8 weeks minimum lead time.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-3')" id="faq-header-3">
+              <span>Can I use my license for multiple events?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-3">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700">
+                  A: Yes! Your Class IV license is annual and covers unlimited events within Oregon. You do NOT need to re-apply for each event. You may need event-specific TRF permits if conducting operations outside the unit, and must notify health departments when operating in different counties.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-4')" id="faq-header-4">
+              <span>What's the difference between my Class IV license and a TRF?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-4">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700">
+                  A: Your Class IV license is for the MOBILE UNIT itself (annual). A TRF (Temporary Restaurant Facility) is for a specific EVENT when you place equipment or conduct operations OUTSIDE your licensed mobile unit. Most events inside the unit do not need TRF.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 5 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-5')" id="faq-header-5">
+              <span>How much does it cost?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-5">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700 mb-2">
+                  A: License fees vary by county, typically:
+                </p>
+                <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                  <li>Class IV plan review: $200-500</li>
+                  <li>Annual license: $300-800</li>
+                  <li>TRF per event: $50-200</li>
+                </ul>
+                <p class="text-gray-700 mt-2">
+                  Contact your county health department for exact fees.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- FAQ 6 -->
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="faq" onclick="toggleDropdown('faq-header-6')" id="faq-header-6">
+              <span>Can Mobile Culinaire handle all of this for me?</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="faq-content-6">
+              <div class="dropdown-content-inner">
+                <p class="text-gray-700">
+                  A: Yes. Our Class IV mobile kitchen trailers come pre-approved in all 36 Oregon counties with complete documentation packages. We handle the permit complexity so you can focus on your event.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="rounded-lg shadow-lg p-8 text-white mb-8" style="background-color:#286140;">
+        <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
+          <!-- Content Section -->
+          <div class="flex-1 w-full md:w-auto">
+            <h2 class="text-2xl font-bold mb-4">Mobile Culinaire: Code Compliant Mobile Kitchens Ready to Operate</h2>
+            <p class="mb-4">Start serving in days, not weeks:</p>
+            <ul class="list-disc list-inside mb-6 space-y-2">
+              <li>Code Compliant mobile kitchen trailers for all 36 Oregon counties</li>
+              <li>Meet all Oregon health department specifications</li>
+              <li>Fire marshal inspection-ready equipment and design</li>
+              <li>Complete documentation packages included</li>
+            </ul>
+            <p class="mb-6 font-semibold">Operational in one day.</p>
+            <div class="space-y-3">
+              <a href="https://www.mobileculinaire.com/mobile-kitchen" target="_blank" class="inline-block w-full md:w-auto bg-white text-green-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition text-center">
+                See models
+              </a>
+              <a href="https://www.mobileculinaire.com/contact" target="_blank" class="inline-block w-full md:w-auto ml-0 md:ml-3 bg-transparent border-2 border-white text-white font-semibold py-3 px-6 rounded-lg hover:bg-white hover:text-green-600 transition text-center">
+                Request a Quote
+              </a>
+            </div>
+          </div>
+          <!-- Image Section -->
+          <div class="w-full md:w-auto" style="flex-shrink: 0; min-width: 0; display: block; visibility: visible;">
+            <img id="cta-image" alt="Mobile Culinaire mobile kitchen" style="display: block !important; visibility: visible !important; width: auto; max-width: 300px; height: auto; border-radius: 0.5rem; object-fit: contain; opacity: 1;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Back Button -->
+      <button onclick="goBack()" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+        ← Start Over
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    // County Data
+    const countyData = {
+      "Baker": {
+        name: "Baker County",
+        health: {
+          phone: "541-473-5186",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Benton": {
+        name: "Benton County",
+        health: {
+          phone: "541-766-6841",
+          email: "health.center@co.benton.or.us",
+          website: "https://www.co.benton.or.us/health",
+          address: "4077 SW Research Way, Corvallis, OR 97333"
+        }
+      },
+      "Clackamas": {
+        name: "Clackamas County",
+        health: {
+          phone: "503-655-8384",
+          email: null,
+          website: "https://www.clackamas.us/publichealth",
+          address: null
+        }
+      },
+      "Clatsop": {
+        name: "Clatsop County",
+        health: {
+          phone: "503-325-8500",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Columbia": {
+        name: "Columbia County",
+        health: {
+          phone: "503-397-7210",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Coos": {
+        name: "Coos County",
+        health: {
+          phone: "541-266-6720",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Crook": {
+        name: "Crook County",
+        health: {
+          phone: "541-447-8155",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Curry": {
+        name: "Curry County",
+        health: {
+          phone: "541-425-7545",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Deschutes": {
+        name: "Deschutes County",
+        health: {
+          phone: "541-322-7400",
+          email: "healthinfo@deschutes.org",
+          website: "https://www.deschutes.org/health",
+          address: "1128 NW Harriman St, Bend, OR 97703"
+        }
+      },
+      "Douglas": {
+        name: "Douglas County",
+        health: {
+          phone: "541-440-3574",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Gilliam": {
+        name: "Gilliam County",
+        health: {
+          phone: "541-506-2753",
+          email: null,
+          website: null,
+          address: null,
+          note: "North Central Public Health District"
+        }
+      },
+      "Grant": {
+        name: "Grant County",
+        health: {
+          phone: "541-620-0965",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Harney": {
+        name: "Harney County",
+        health: {
+          phone: "541-620-0965",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Hood River": {
+        name: "Hood River County",
+        health: {
+          phone: "541-387-6885",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Jackson": {
+        name: "Jackson County",
+        health: {
+          phone: "541-774-8206",
+          email: null,
+          website: "https://jacksoncountyor.gov/hhs/Public-Health",
+          address: "1005 E Main St, Medford, OR 97504"
+        }
+      },
+      "Jefferson": {
+        name: "Jefferson County",
+        health: {
+          phone: "541-475-4456",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Josephine": {
+        name: "Josephine County",
+        health: {
+          phone: "541-474-5325",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Klamath": {
+        name: "Klamath County",
+        health: {
+          phone: "541-883-1122",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Lake": {
+        name: "Lake County",
+        health: {
+          phone: "541-947-6045",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Lane": {
+        name: "Lane County",
+        health: {
+          phone: "541-682-4480",
+          email: "publichealth@lanecountyor.gov",
+          website: "https://www.lanecounty.org/health",
+          address: "151 W 7th Ave, Eugene, OR 97401"
+        }
+      },
+      "Lincoln": {
+        name: "Lincoln County",
+        health: {
+          phone: "541-265-4127",
+          email: null,
+          website: "https://www.co.lincoln.or.us/hhs",
+          address: "225 NW Nye St, Newport, OR 97365"
+        }
+      },
+      "Linn": {
+        name: "Linn County",
+        health: {
+          phone: "541-967-3821",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Malheur": {
+        name: "Malheur County",
+        health: {
+          phone: "541-473-5186",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Marion": {
+        name: "Marion County",
+        health: {
+          phone: "503-588-5346",
+          email: null,
+          website: "https://www.co.marion.or.us/HLT",
+          address: "3180 Center St NE, Salem, OR 97301"
+        }
+      },
+      "Morrow": {
+        name: "Morrow County",
+        health: {
+          phone: "541-278-6394",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Multnomah": {
+        name: "Multnomah County",
+        health: {
+          phone: "503-988-3400",
+          email: "health.environmental@multco.us",
+          website: "https://multco.us/health",
+          address: "426 SW Stark St, Portland, OR 97204"
+        }
+      },
+      "Polk": {
+        name: "Polk County",
+        health: {
+          phone: "503-623-9237",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Sherman": {
+        name: "Sherman County",
+        health: {
+          phone: "541-506-2753",
+          email: null,
+          website: null,
+          address: null,
+          note: "North Central Public Health District"
+        }
+      },
+      "Tillamook": {
+        name: "Tillamook County",
+        health: {
+          phone: "503-842-3943",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Umatilla": {
+        name: "Umatilla County",
+        health: {
+          phone: "541-278-6394",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Union": {
+        name: "Union County",
+        health: {
+          phone: "541-962-8818",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Wallowa": {
+        name: "Wallowa County",
+        health: {
+          phone: "971-673-0442",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Wasco": {
+        name: "Wasco County",
+        health: {
+          phone: "541-506-2753",
+          email: null,
+          website: null,
+          address: null,
+          note: "North Central Public Health District"
+        }
+      },
+      "Washington": {
+        name: "Washington County",
+        health: {
+          phone: "503-846-8722",
+          email: "health_info@co.washington.or.us",
+          website: "https://www.co.washington.or.us/HHS/PublicHealth",
+          address: "155 N 1st Ave, Hillsboro, OR 97124"
+        }
+      },
+      "Wheeler": {
+        name: "Wheeler County",
+        health: {
+          phone: "541-620-0965",
+          email: null,
+          website: null,
+          address: null
+        }
+      },
+      "Yamhill": {
+        name: "Yamhill County",
+        health: {
+          phone: "503-434-7525",
+          email: null,
+          website: null,
+          address: null
         }
       }
-    }, 500);
-    
-    // Also try again after longer delay for dynamic content
-    setTimeout(function() {
-      try {
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (iframeDoc && iframeDoc.body) {
-          const height = Math.max(
-            iframeDoc.body.scrollHeight,
-            iframeDoc.documentElement.scrollHeight
-          ) + 100;
-          resizeIframe(height);
+    };
+
+    // App State
+    const appState = {
+      menuSelection: null,
+      selectedCounty: null,
+      outdoorCooking: false,
+      seating: false,
+      auxiliaryStorage: false,
+      temporaryEvents: false,
+      determinedClass: null,
+      leadCaptured: false,
+      lead: {
+        firstName: '',
+        lastName: '',
+        company: '',
+        email: ''
+      }
+    };
+
+    // Menu options mapping
+    const menuOptions = {
+      'A': {
+        text: 'Pre-packaged foods only',
+        class: 'I'
+      },
+      'B': {
+        text: 'Hot or cold display foods (unpackaged)',
+        class: 'II'
+      },
+      'C': {
+        text: 'Prepared/assembled foods',
+        class: 'III'
+      },
+      'D': {
+        text: 'Cooked foods including raw animal products',
+        class: 'IV'
+      }
+    };
+
+      // Resize iframe to match content height (for Webflow embedding)
+      // Calculate and adjust dynamic padding based on expanded dropdowns (global function)
+      window.adjustDynamicPadding = function adjustDynamicPadding() {
+        const container = document.querySelector('.oregon-tool-container');
+        if (!container) return;
+
+        const resultsSection = document.getElementById('results-section');
+        if (!resultsSection || resultsSection.style.display === 'none') {
+          // Reset to base padding when form is shown
+          container.style.paddingBottom = '2rem';
+          document.body.style.paddingBottom = '2rem';
+          return;
         }
-      } catch (e) {
-        // Cross-origin - rely on postMessage
-      }
-    }, 2000);
-  });
-  
-  // Also listen for window resize events and request iframe to resize
-  let resizeTimeout;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(function() {
-      try {
-        iframe.contentWindow.postMessage({ type: 'requestResize' }, '*');
-      } catch (e) {
-        // Cross-origin restriction
-      }
-    }, 300);
-  });
-})();
-</script>
 
-<style>
-  .tool-wrapper {
-    position: relative;
-    overflow: visible !important; /* Important: prevents cropping */
-    width: 100%;
-    min-height: 600px;
-  }
-  
-  .tool-wrapper iframe {
-    display: block;
-    border: none;
-    width: 100%;
-  }
-  
-  /* Ensure parent containers don't clip content */
-  .tool-wrapper * {
-    overflow: visible !important;
-  }
-</style>
+        // Count expanded dropdowns
+        const expandedDropdowns = document.querySelectorAll('.dropdown-content.expanded');
+        const expandedCount = expandedDropdowns.length;
 
+        // Calculate total height of expanded content
+        let totalExpandedHeight = 0;
+        expandedDropdowns.forEach(dropdown => {
+          const contentInner = dropdown.querySelector('.dropdown-content-inner');
+          if (contentInner) {
+            totalExpandedHeight += contentInner.scrollHeight;
+          }
+        });
+
+        // Base padding (conservative)
+        const basePadding = 2; // rem
+        // Additional padding based on expanded content (1rem per 300px of content)
+        const additionalPadding = Math.ceil(totalExpandedHeight / 300);
+        // Minimum extra padding when dropdowns are expanded
+        const minExtraPadding = expandedCount > 0 ? 2 : 0;
+        // Maximum padding to prevent excessive spacing
+        const maxPadding = window.innerWidth <= 768 ? 10 : 12; // rem
+        
+        const finalPadding = Math.min(basePadding + additionalPadding + minExtraPadding, maxPadding);
+        container.style.paddingBottom = finalPadding + 'rem';
+        
+        // Add minimal body padding
+        document.body.style.paddingBottom = Math.max(finalPadding * 0.3, 2) + 'rem';
+      }
+
+      function resizeIframe() {
+        // Adjust padding first
+        if (typeof window.adjustDynamicPadding === 'function') {
+          window.adjustDynamicPadding();
+        }
+        
+        // Then resize iframe
+        if (window.parent !== window) {
+          // Use requestAnimationFrame for better timing with browser layout
+          requestAnimationFrame(() => {
+            setTimeout(() => {
+              // Get the full document height including all padding
+              const bodyHeight = document.body.scrollHeight;
+              const htmlHeight = document.documentElement.scrollHeight;
+              const container = document.querySelector('.oregon-tool-container');
+              const containerHeight = container ? container.scrollHeight + container.offsetTop : 0;
+              
+              // Use the maximum of all height measurements
+              const maxHeight = Math.max(bodyHeight, htmlHeight, containerHeight);
+              
+              // Add moderate buffer to prevent cropping
+              const heightWithBuffer = maxHeight + 50;
+              
+              // Send resize message in multiple formats for compatibility
+              const message = {
+                type: 'resize',
+                height: heightWithBuffer
+              };
+              
+              // Try multiple message formats
+              window.parent.postMessage(message, '*');
+              window.parent.postMessage(heightWithBuffer, '*'); // Some handlers expect just the number
+              window.parent.postMessage({ height: heightWithBuffer }, '*'); // Alternative format
+              
+              // Send again after a short delay to ensure it's received
+              setTimeout(() => {
+                window.parent.postMessage(message, '*');
+              }, 200);
+              
+              // Debug logging (remove in production if desired)
+              console.log('Iframe resize sent:', heightWithBuffer, 'px');
+            }, 150);
+          });
+        }
+      }
+
+      // Resize on content changes
+      function observeContentChanges() {
+        const observer = new MutationObserver(function(mutations) {
+          resizeIframe();
+        });
+
+        const container = document.querySelector('.oregon-tool-container');
+        if (container) {
+          observer.observe(container, {
+            childList: true,
+            subtree: true,
+            attributes: true,
+            attributeFilter: ['style', 'class']
+          });
+        }
+
+        // Also resize on window resize
+        window.addEventListener('resize', function() {
+          adjustDynamicPadding();
+          resizeIframe();
+        });
+      }
+
+      // Listen for resize requests from parent (Webflow)
+      window.addEventListener('message', function(event) {
+        if (event.data && event.data.type === 'requestResize') {
+          // Parent is requesting a resize
+          setTimeout(function() {
+            resizeIframe();
+          }, 100);
+        }
+      });
+
+      // Initialize
+      document.addEventListener('DOMContentLoaded', function() {
+        setupEmailGate();
+        setupCTAImage();
+        setTimeout(function() {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
+          resizeIframe();
+          observeContentChanges();
+        }, 100);
+        
+        // Send initial resize after page fully loads
+        window.addEventListener('load', function() {
+          setTimeout(function() {
+            resizeIframe();
+          }, 500);
+        });
+      });
+
+      // Setup CTA image with proper path handling
+      function setupCTAImage() {
+        const img = document.getElementById('cta-image');
+        if (!img) return;
+        
+        // Try multiple path variations
+        const paths = [
+          'webflow card (2 sec).gif',
+          './webflow card (2 sec).gif',
+          'webflow%20card%20(2%20sec).gif',
+          './webflow%20card%20(2%20sec).gif'
+        ];
+        
+        let currentPathIndex = 0;
+        
+        function tryNextPath() {
+          if (currentPathIndex < paths.length) {
+            img.src = paths[currentPathIndex];
+            currentPathIndex++;
+          } else {
+            console.error('All image paths failed. Image file may not be uploaded to GitHub.');
+            img.style.display = 'none';
+          }
+        }
+        
+        img.onerror = function() {
+          console.log('Image path failed:', this.src, '- Trying next path...');
+          tryNextPath();
+        };
+        
+        img.onload = function() {
+          console.log('Image loaded successfully from:', this.src);
+        };
+        
+        // Start with first path
+        tryNextPath();
+      }
+
+    // Determine class from menu selection
+    function determineClass(menuSelection) {
+      return menuOptions[menuSelection].class;
+    }
+
+    // Validate form
+    function validateForm() {
+      const menuSelected = document.querySelector('input[name="menu"]:checked');
+      const countySelected = document.getElementById('county').value;
+      
+      if (!menuSelected) {
+        alert('Please select a menu type');
+        return false;
+      }
+      
+      if (!countySelected || countySelected === 'default') {
+        alert('Please select a county');
+        return false;
+      }
+      
+      return true;
+    }
+
+    // ---------- EMAIL GATE ----------
+    let _pendingResults = null;
+
+    function openEmailGate() {
+      const gate = document.getElementById('email-gate');
+      if (!gate) return;
+      gate.classList.remove('hidden');
+      gate.setAttribute('aria-hidden', 'false');
+
+      // Ensure gate is visible at the top of the viewport (no scrolling needed)
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
+      // Focus first input for accessibility
+      setTimeout(() => {
+        const first = document.getElementById('lead-first-name');
+        if (first) first.focus();
+      }, 50);
+    }
+
+    function closeEmailGate() {
+      const gate = document.getElementById('email-gate');
+      if (!gate) return;
+      gate.classList.add('hidden');
+      gate.setAttribute('aria-hidden', 'true');
+      const err = document.getElementById('lead-error');
+      if (err) err.classList.add('hidden');
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
+    }
+
+    function setupEmailGate() {
+      const form = document.getElementById('email-gate-form');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const firstName = document.getElementById('lead-first-name')?.value?.trim() || '';
+        const lastName = document.getElementById('lead-last-name')?.value?.trim() || '';
+        const company = document.getElementById('lead-company')?.value?.trim() || '';
+        const email = document.getElementById('lead-email')?.value?.trim() || '';
+
+        const ok = firstName && lastName && company && isValidEmail(email);
+        const err = document.getElementById('lead-error');
+        if (!ok) {
+          if (err) err.classList.remove('hidden');
+          return;
+        }
+
+        if (err) err.classList.add('hidden');
+
+        appState.leadCaptured = true;
+        appState.lead = { firstName, lastName, company, email };
+
+        // TODO (optional): send lead to your CRM endpoint here
+
+        closeEmailGate();
+
+        if (_pendingResults) {
+          const fn = _pendingResults;
+          _pendingResults = null;
+          fn();
+        }
+      });
+
+      // Basic ESC-to-close
+      document.addEventListener('keydown', function (e) {
+        const gate = document.getElementById('email-gate');
+        if (e.key === 'Escape' && gate && !gate.classList.contains('hidden')) {
+          closeEmailGate();
+        }
+      });
+    }
+
+    // Generate results (runs validation + gate, then shows results)
+    function generateResults() {
+      if (!validateForm()) return;
+      
+      // Update state
+      appState.menuSelection = document.querySelector('input[name="menu"]:checked').value;
+      appState.selectedCounty = document.getElementById('county').value;
+      appState.outdoorCooking = document.getElementById('outdoor-cooking').checked;
+      appState.seating = document.getElementById('seating').checked;
+      appState.auxiliaryStorage = document.getElementById('auxiliary-storage').checked;
+      appState.temporaryEvents = document.getElementById('temp-events').checked;
+      appState.determinedClass = determineClass(appState.menuSelection);
+      
+      const showResults = () => {
+        // Hide form, show results
+        document.getElementById('form-section').style.display = 'none';
+        document.getElementById('results-section').style.display = 'block';
+
+        // Populate results
+        populateClassHeader();
+        populateRequirementsTable();
+        populateTemperatureSection();
+        populateComplianceNotes();
+        populateContacts();
+        populateChecklist();
+
+        // Setup CTA image after results are displayed
+        setTimeout(() => {
+          setupCTAImage();
+        }, 100);
+
+        // Adjust padding and resize iframe after content is populated
+        setTimeout(() => {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
+          resizeIframe();
+        }, 500);
+
+        // Ensure results are visible at top (important after gate)
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      };
+
+      // Gate results behind lead capture (only once per session)
+      if (!appState.leadCaptured) {
+        _pendingResults = showResults;
+        openEmailGate();
+        return;
+      }
+
+      showResults();
+    }
+
+    // Populate class header
+    function populateClassHeader() {
+      const menuText = menuOptions[appState.menuSelection].text;
+      const classNum = appState.determinedClass;
+      
+      let whyText = '';
+      let allowsText = '';
+      
+      if (classNum === 'I') {
+        whyText = 'This is the simplest mobile food unit classification. Requires minimal equipment and permits.';
+        allowsText = `
+          <ul class="list-disc list-inside space-y-1">
+            <li>Serving intact packaged foods (chips, canned drinks, wrapped items)</li>
+            <li>Non-potentially hazardous beverages from urns/dispensers</li>
+            <li>Customer self-service is allowed</li>
+          </ul>
+        `;
+      } else if (classNum === 'II') {
+        whyText = 'You\'ll be holding and displaying unpackaged foods for service. Requires water system and handwashing station.';
+        allowsText = `
+          <ul class="list-disc list-inside space-y-1">
+            <li>Serving intact packaged foods (chips, canned drinks, wrapped items)</li>
+            <li>Non-potentially hazardous beverages from urns/dispensers</li>
+            <li>Hot and cold holding of unpackaged foods</li>
+            <li>Display of foods for customer service</li>
+            <li>Staff serves customers (no self-service)</li>
+          </ul>
+        `;
+      } else if (classNum === 'III') {
+        whyText = 'You\'ll be preparing and assembling food on your unit. Requires dishwashing solution (sink or commissary).';
+        allowsText = `
+          <ul class="list-disc list-inside space-y-1">
+            <li>Serving intact packaged foods (chips, canned drinks, wrapped items)</li>
+            <li>Non-potentially hazardous beverages from urns/dispensers</li>
+            <li>Hot and cold holding of unpackaged foods</li>
+            <li>Display of foods for customer service</li>
+            <li>Staff serves customers (no self-service)</li>
+            <li>Cooking, preparing, and assembling food on unit</li>
+            <li>Pre-cooked items only (no raw animal products)</li>
+            <li>Examples: Espresso drinks, sandwich assembly, smoothies</li>
+          </ul>
+        `;
+      } else if (classNum === 'IV') {
+        whyText = 'You\'ll be cooking raw meat, fish, or eggs from scratch. This is the most complex classification with full requirements.';
+        allowsText = `
+          <ul class="list-disc list-inside space-y-1">
+            <li>Serving intact packaged foods (chips, canned drinks, wrapped items)</li>
+            <li>Non-potentially hazardous beverages from urns/dispensers</li>
+            <li>Hot and cold holding of unpackaged foods</li>
+            <li>Display of foods for customer service</li>
+            <li>Staff serves customers (no self-service)</li>
+            <li>Cooking, preparing, and assembling food on unit</li>
+            <li>Full menu with no restrictions</li>
+            <li>Cooking raw animal products (burgers, chicken, fish, eggs)</li>
+            <li>Optional outdoor cooking unit (one BBQ or pizza oven)</li>
+          </ul>
+        `;
+      }
+      
+      document.getElementById('class-header').innerHTML = `
+        <h2 class="text-2xl font-bold mb-4">Your Mobile Kitchen Classification</h2>
+        <div class="text-4xl font-bold mb-4" style="color:#286140;">CLASS ${classNum} MOBILE FOOD UNIT</div>
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold mb-2">Why this class?</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>You selected: <strong>${menuText}</strong></li>
+              <li>${whyText}</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">What this class allows:</h3>
+            ${allowsText}
+          </div>
+        </div>
+      `;
+    }
+
+    // Populate requirements table
+    function populateRequirementsTable() {
+      const classNum = appState.determinedClass;
+      let tableHTML = '';
+      
+      if (classNum === 'I') {
+        tableHTML = `
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-I')" id="req-header-I">
+              <span>📊 YOUR CLASS I REQUIREMENTS</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="req-content-I">
+              <div class="dropdown-content-inner">
+                <div class="overflow-x-auto">
+                  <table class="requirements-table">
+            <thead>
+              <tr>
+                <th>REQUIREMENT</th>
+                <th>YOUR CLASS I STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Requirement"><strong>Water Supply</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Handwashing Station</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>3-Compartment Sink</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Dishwashing</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Base of Operation</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Customer Self-Service</strong></td>
+                <td data-label="Status">✓ Allowed</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Outdoor Cooking Unit</strong></td>
+                <td data-label="Status">❌ NO outdoor cooking</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Key Limitation</strong></td>
+                <td data-label="Status">
+                  ⚠️ Only intact packaged foods<br>
+                  ⚠️ NO dispensed ice allowed
+                </td>
+              </tr>
+            </tbody>
+          </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (classNum === 'II') {
+        tableHTML = `
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-II')" id="req-header-II">
+              <span>📊 YOUR CLASS II REQUIREMENTS</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="req-content-II">
+              <div class="dropdown-content-inner">
+                <div class="overflow-x-auto">
+                  <table class="requirements-table">
+            <thead>
+              <tr>
+                <th>REQUIREMENT</th>
+                <th>YOUR CLASS II STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Requirement"><strong>Water Supply</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Handwashing: 5 gallons min<br>
+                  • 20 PSI minimum pressure
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Handwashing Station</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Hot/cold running water<br>
+                  • Soap dispenser<br>
+                  • Paper towels or air dryer
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>3-Compartment Sink</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Dishwashing</strong></td>
+                <td data-label="Status">
+                  ❌ NOT required<br>
+                  (Single-use items only)
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Base of Operation</strong></td>
+                <td data-label="Status">❌ NOT required</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Customer Self-Service</strong></td>
+                <td data-label="Status">
+                  ❌ NOT allowed<br>
+                  (Staff serves customers)
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Outdoor Cooking Unit</strong></td>
+                <td data-label="Status">❌ NO outdoor cooking</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Key Limitation</strong></td>
+                <td data-label="Status">
+                  ⚠️ NO food prep on unit<br>
+                  ⚠️ NO customer self-service
+                </td>
+              </tr>
+            </tbody>
+          </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (classNum === 'III') {
+        tableHTML = `
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-III')" id="req-header-III">
+              <span>📊 YOUR CLASS III REQUIREMENTS</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="req-content-III">
+              <div class="dropdown-content-inner">
+                <div class="overflow-x-auto">
+                  <table class="requirements-table">
+            <thead>
+              <tr>
+                <th>REQUIREMENT</th>
+                <th>YOUR CLASS III STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Requirement"><strong>Water Supply</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Handwashing: 5 gallons min<br>
+                  • Food prep: varies by menu<br>
+                  • 20 PSI minimum pressure
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Handwashing Station</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Hot/cold running water<br>
+                  • Soap dispenser<br>
+                  • Paper towels or air dryer
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>3-Compartment Sink OR Commissary</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED (Choose one)<br>
+                  • 3-comp sink on unit, OR<br>
+                  • Licensed commissary agreement
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Dishwashing</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • On unit OR at commissary
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Base of Operation</strong></td>
+                <td data-label="Status">
+                  ⚠️ IF no 3-comp sink on unit<br>
+                  Licensed commissary required
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Customer Self-Service</strong></td>
+                <td data-label="Status">❌ NOT allowed</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Outdoor Cooking Unit</strong></td>
+                <td data-label="Status">❌ NO outdoor cooking</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Key Limitation</strong></td>
+                <td data-label="Status">
+                  ⚠️ NO raw animal cooking<br>
+                  ⚠️ Must have dishwashing access
+                </td>
+              </tr>
+            </tbody>
+          </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (classNum === 'IV') {
+        tableHTML = `
+          <div class="dropdown-section">
+            <div class="dropdown-header" data-section="requirements" onclick="toggleDropdown('req-header-IV')" id="req-header-IV">
+              <span>📊 YOUR CLASS IV REQUIREMENTS</span>
+              <span class="dropdown-icon">▼</span>
+            </div>
+            <div class="dropdown-content" id="req-content-IV">
+              <div class="dropdown-content-inner">
+                <div class="overflow-x-auto">
+                  <table class="requirements-table">
+            <thead>
+              <tr>
+                <th>REQUIREMENT</th>
+                <th>YOUR CLASS IV STATUS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td data-label="Requirement"><strong>Water Supply</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED - FULL SYSTEM<br>
+                  • Dishwashing: 30+ gallons<br>
+                  • Handwashing: 5+ gallons<br>
+                  • 20 PSI minimum pressure<br>
+                  • Tanks must be translucent
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Handwashing Station</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Hot/cold running water<br>
+                  • Soap dispenser<br>
+                  • Paper towels or air dryer
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>3-Compartment Sink</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED ON UNIT<br>
+                  • Wash, rinse, sanitize<br>
+                  • Hot water for dishwashing
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Dishwashing</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED ON UNIT<br>
+                  • 3-compartment sink mandatory
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Waste Tank</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • 15% larger than fresh water
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Base of Operation</strong></td>
+                <td data-label="Status">
+                  ✅ REQUIRED<br>
+                  • Licensed commissary, OR<br>
+                  • Unit is fully self-contained<br>
+                  (County determines eligibility)
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Customer Self-Service</strong></td>
+                <td data-label="Status">❌ NOT allowed</td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Outdoor Cooking Unit</strong></td>
+                <td data-label="Status">
+                  ${appState.outdoorCooking ? '✅ ONE cooking unit allowed' : '✅ ONE cooking unit allowed (optional)'}<br>
+                  • BBQ or pizza oven only<br>
+                  • NOT: flat grill, griddle, wok<br>
+                  • Handwash station adjacent<br>
+                  • Must move with unit
+                </td>
+              </tr>
+              <tr>
+                <td data-label="Requirement"><strong>Key Requirements</strong></td>
+                <td data-label="Status">
+                  ⚠️ Most complex class<br>
+                  ⚠️ Full equipment suite required<br>
+                  ⚠️ Commissary typically needed
+                </td>
+              </tr>
+            </tbody>
+          </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      
+      document.getElementById('requirements-table-section').innerHTML = tableHTML;
+    }
+
+    // Populate temperature section
+    function populateTemperatureSection() {
+      const classNum = appState.determinedClass;
+      
+      if (classNum === 'I') {
+        document.getElementById('temperature-section').innerHTML = '';
+        return;
+      }
+      
+      document.getElementById('temperature-section').innerHTML = `
+        <div class="dropdown-section">
+          <div class="dropdown-header" data-section="temperature" onclick="toggleDropdown('temp-header')" id="temp-header">
+            <span>🌡️ REQUIRED FOOD TEMPERATURES</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="dropdown-content" id="temp-content">
+            <div class="dropdown-content-inner">
+        <p class="text-gray-600 mb-4">(Potentially Hazardous Foods)</p>
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold mb-2">COLD HOLDING:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>41°F or below</li>
+              <li>Check every 4 hours minimum</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">HOT HOLDING:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>135°F or above</li>
+              <li>Check every 4 hours minimum</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">COOKING TEMPERATURES:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Ground beef, pork: 155°F</li>
+              <li>Whole cuts, fish, eggs: 145°F</li>
+              <li>Poultry: 165°F</li>
+              <li>Reheating: 165°F (within 2 hours)</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">EQUIPMENT REQUIRED:</h3>
+            <p>✅ Metal-stem thermometer (0°F to 220°F)</p>
+          </div>
+          <div class="bg-blue-50 p-4 rounded-lg italic text-sm">
+            <strong>From Oregon regulations:</strong><br>
+            "A metal-stem thermometer, accurate to ±2°F, in the range of 0°F to 220°F, shall be provided to monitor food temperatures."
+          </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Populate compliance notes
+    function populateComplianceNotes() {
+      document.getElementById('compliance-section').innerHTML = `
+        <div class="dropdown-section">
+          <div class="dropdown-header" data-section="compliance" onclick="toggleDropdown('compliance-header')" id="compliance-header">
+            <span>⚠️ CRITICAL COMPLIANCE REQUIREMENTS</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="dropdown-content" id="compliance-content">
+            <div class="dropdown-content-inner">
+        <p class="text-gray-600 mb-4">(All Classes)</p>
+        <div class="space-y-4">
+          <div>
+            <h3 class="font-semibold mb-2">BEFORE OPERATION:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>License required BEFORE operation</li>
+              <li>Plan review must be completed first</li>
+              <li>Operating without license is illegal</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">MOBILITY:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Unit must be mobile at all times</li>
+              <li>Wheels must be functional during operation</li>
+              <li>Cannot be assembled at location</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">MODIFICATIONS:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Any changes require re-approval</li>
+              <li>Cannot modify without health dept OK</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">MULTI-COUNTY:</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Operating in different county requires notification to that county's health dept</li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-2">WATER TANKS (if applicable):</h3>
+            <ul class="list-disc list-inside space-y-1">
+              <li>Must be translucent to determine cleanliness</li>
+              <li>Cleaned every 6 months minimum</li>
+            </ul>
+          </div>
+          <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+            <strong>From Oregon regulations:</strong><br>
+            "Oregon law requires that all food service activities open to the public be licensed PRIOR to operation."
+          </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Populate contacts
+    function populateContacts() {
+      const county = countyData[appState.selectedCounty];
+      const classNum = appState.determinedClass;
+      let contactsHTML = `
+        <div class="dropdown-section">
+          <div class="dropdown-header" data-section="contacts" onclick="toggleDropdown('contacts-header')" id="contacts-header">
+            <span>📞 YOUR REQUIRED PERMITS & CONTACTS</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="dropdown-content" id="contacts-content">
+            <div class="dropdown-content-inner">
+        <p class="text-gray-600 mb-4">Class ${classNum} - ${county.name}</p>
+      `;
+
+      // Contact 1: Health Department
+      contactsHTML += generateHealthDeptContact(county, classNum);
+      
+      // Contact 2: Fire Marshal (Classes II-IV)
+      if (['II', 'III', 'IV'].includes(classNum)) {
+        contactsHTML += generateFireMarshalContact(county);
+      }
+      
+      // Contact 3: Planning/Zoning
+      contactsHTML += generatePlanningContact(county);
+      
+      // Contact 4: Dishwashing/Commissary (Class III)
+      if (classNum === 'III') {
+        contactsHTML += generateDishwashingContact(county);
+      }
+      
+      // Contact 4/5: Base of Operation (Class IV)
+      if (classNum === 'IV') {
+        contactsHTML += generateBaseOfOperationContact(county);
+      }
+      
+      // Contact: Food Handler
+      contactsHTML += generateFoodHandlerContact();
+      
+      // Contact: Restroom
+      contactsHTML += generateRestroomContact(appState.seating);
+      
+      // Conditional contacts
+      if (appState.outdoorCooking) {
+        if (classNum === 'IV') {
+          contactsHTML += generateOutdoorCookingContact(county);
+        } else {
+          contactsHTML += generateOutdoorCookingWarning(classNum);
+        }
+      }
+      
+      if (appState.auxiliaryStorage) {
+        contactsHTML += generateAuxiliaryStorageContact(county);
+      }
+      
+      if (appState.temporaryEvents) {
+        contactsHTML += generateTemporaryEventsContact(county);
+      }
+      
+      contactsHTML += `
+            </div>
+          </div>
+        </div>
+      `;
+      document.getElementById('contacts-section').innerHTML = contactsHTML;
+    }
+
+    // Generate health department contact
+    function generateHealthDeptContact(county, classNum) {
+      let html = `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">1️⃣ PRIMARY CONTACT: ${county.name} County Health Department</h3>
+          <p class="text-sm text-gray-600 mb-4">REQUIRED • Plan Review & License</p>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-2">${county.name} County Health Department</p>
+            <p class="text-sm text-gray-600 mb-4">Environmental Health Division</p>
+            <div class="space-y-2">
+      `;
+      
+      if (county.health.phone) {
+        html += `<p>📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>`;
+      }
+      if (county.health.email) {
+        html += `<p>📧 <a href="mailto:${county.health.email}" class="text-blue-600 hover:underline">${county.health.email}</a></p>`;
+      }
+      if (county.health.website) {
+        html += `<p>🌐 <a href="${county.health.website}" target="_blank" class="text-blue-600 hover:underline">${county.health.website}</a></p>`;
+      }
+      if (county.health.address) {
+        html += `<p>📍 ${county.health.address}</p>`;
+      }
+      
+      html += `
+            </div>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">What they handle:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Plan review (must complete BEFORE licensing)</li>
+                <li>Mobile food unit license</li>
+                <li>Health inspection</li>
+      `;
+      
+      if (classNum === 'IV') {
+        html += `
+                <li>Base of operation verification</li>
+                <li>Water system approval (30+ gallons dishwashing, 5+ handwashing)</li>
+                <li>3-compartment sink approval</li>
+        `;
+      }
+      
+      html += `
+              </ul>
+            </div>
+            <div class="mt-4 text-sm">
+              <p class="font-semibold mb-2">Timeline:</p>
+              <p>"Due to current application volumes, it may take up to 4-6 weeks for a Plan Reviewer to complete an initial review." (Source: Oregon Mobile Food Unit Operation Guide)</p>
+            </div>
+            <div class="mt-4">
+              <p class="font-semibold mb-2">BEFORE contacting them:</p>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+      `;
+      
+      if (classNum === 'IV') {
+        html += `
+                <li>Determine if unit is self-contained OR needs commissary</li>
+        `;
+      }
+      if (classNum === 'III') {
+        html += `
+                <li>Decide: 3-comp sink on unit OR commissary agreement</li>
+        `;
+      }
+      
+      html += `
+                <li>Complete menu planning</li>
+                <li>Have unit design specifications ready
+      `;
+      
+      if (classNum === 'IV') {
+        html += `
+                <li>Confirm water system specs (30+ gal dish, 5+ gal handwash)</li>
+                <li>Confirm waste tank (15% larger than fresh water)
+        `;
+      }
+      
+      html += `
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      return html;
+    }
+
+    // Generate fire marshal contact
+    function generateFireMarshalContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">2️⃣ REQUIRED: Fire Marshal Inspection</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-2">${county.name} Fire Marshal</p>
+            <p class="mb-2">📞 Contact county health department for Fire Marshal referral: <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">Why required:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Hot/cold holding equipment requires inspection</li>
+                <li>Electrical wiring verification</li>
+              </ul>
+            </div>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">What they inspect:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Heating/cooling equipment installation</li>
+                <li>Electrical wiring safety</li>
+                <li>Emergency exits</li>
+              </ul>
+            </div>
+            <div class="mt-4 bg-blue-50 p-4 rounded text-sm italic">
+              <strong>From Oregon regulations:</strong><br>
+              "Prior to licensing, there may be other agencies from which you will be required to obtain approvals. These include, but are not limited to planning (zoning), Fire Marshall, and other city or county authorities."
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate planning contact
+    function generatePlanningContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">${appState.determinedClass === 'I' ? '2' : '3'}️⃣ REQUIRED: Planning/Zoning Approval</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-2">${county.name} County Planning Department</p>
+            <p class="mb-2">📞 Contact county offices for planning department</p>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">Why required:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Zoning approval determines where you can legally operate</li>
+                <li>Must be approved before health department license</li>
+              </ul>
+            </div>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">What they determine:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Permitted operating zones</li>
+                <li>Time restrictions (hours/days)</li>
+                <li>Location restrictions</li>
+                <li>Parking regulations</li>
+              </ul>
+            </div>
+            <div class="mt-4 bg-blue-50 p-4 rounded text-sm italic">
+              <strong>From Oregon regulations:</strong><br>
+              "Prior to licensing, there may be other agencies from which you will be required to obtain approvals. These include, but are not limited to planning (zoning), Fire Marshall, and other city or county authorities."
+            </div>
+            <p class="mt-4 text-sm"><strong>Action:</strong> Contact your county/city planning office to determine zoning requirements for your intended operating locations.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate dishwashing contact (Class III)
+    function generateDishwashingContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">4️⃣ REQUIRED: Dishwashing Solution</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-4">Choose One Option:</p>
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold mb-2">OPTION A: 3-Compartment Sink on Unit</h4>
+                <p class="text-sm">Approved during plan review with health department</p>
+                <p class="text-sm mt-2">Contact: ${county.name} County Health Department</p>
+                <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+              </div>
+              <div class="border-t pt-4">
+                <h4 class="font-semibold mb-2">OPTION B: Licensed Commissary Agreement</h4>
+                <p class="text-sm mb-2"><strong>What is required:</strong></p>
+                <p class="text-sm">A licensed commercial kitchen providing:</p>
+                <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                  <li>Food preparation area</li>
+                  <li>Food storage (dry, refrigerated, frozen)</li>
+                  <li>Dishwashing facilities</li>
+                  <li>Water filling and waste disposal</li>
+                </ul>
+                <p class="text-sm mt-2 font-semibold text-red-600">⚠️ YOU NEED: Signed commissary agreement BEFORE health department approval</p>
+                <p class="text-sm mt-2">Contact county health department to discuss:</p>
+                <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+                <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                  <li>Approved commissary options in your area</li>
+                  <li>Requirements for commissary agreement</li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt-4 bg-blue-50 p-4 rounded text-sm italic">
+              <strong>From Oregon regulations:</strong><br>
+              "Mobile food units must operate from a base of operation or be fully self-contained."
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate base of operation contact (Class IV)
+    function generateBaseOfOperationContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">4️⃣ REQUIRED: Base of Operation/Commissary</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold text-red-600 mb-4">⚠️ Class IV requires a base of operation</p>
+            <div class="bg-blue-50 p-4 rounded text-sm italic mb-4">
+              <strong>From Oregon regulations:</strong><br>
+              "Mobile food units must operate from a base of operation or be fully self-contained."
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">What is required:</h4>
+              <p class="text-sm mb-2">A licensed commercial kitchen providing:</p>
+              <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                <li>Food preparation area</li>
+                <li>Food storage (dry, refrigerated, frozen)</li>
+                <li>Dishwashing facilities</li>
+                <li>Water filling and waste disposal</li>
+              </ul>
+            </div>
+            <p class="text-sm font-semibold text-red-600 mb-4">⚠️ YOU NEED: Signed commissary agreement BEFORE health department approval</p>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Self-Contained Option:</h4>
+              <p class="text-sm">Some Class IV units may qualify as fully self-contained (containing ALL equipment a commissary would provide).</p>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Contact to discuss options:</h4>
+              <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+              <p class="text-sm">${county.name} County Health Department</p>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Questions to ask:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                <li>Does my unit qualify as self-contained?</li>
+                <li>What are approved commissary options in my area?</li>
+                <li>What documentation is needed for commissary agreement?</li>
+              </ul>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded text-sm">
+              <strong>Important:</strong><br>
+              "A mobile food unit may not serve as a commissary for another mobile food unit."
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate food handler contact
+    function generateFoodHandlerContact() {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">${appState.determinedClass === 'I' ? '3' : appState.determinedClass === 'II' ? '4' : appState.determinedClass === 'III' ? '5' : '6'}️⃣ REQUIRED: Food Handler Certificates</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-2">Oregon Food Handler Program</p>
+            <p class="mb-2">🌐 <a href="https://www.orfoodhandlers.com/eMain.aspx" target="_blank" class="text-blue-600 hover:underline">https://www.orfoodhandlers.com/eMain.aspx</a></p>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">Who needs it:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>All food service workers</li>
+                <li>Must be obtained before starting work</li>
+              </ul>
+            </div>
+            <div class="mt-4 bg-blue-50 p-4 rounded text-sm italic">
+              <strong>From Oregon regulations:</strong><br>
+              "All food service workers must obtain a food handler certificate."
+            </div>
+            <div class="mt-4">
+              <h4 class="font-semibold mb-2">Person In Charge (PIC) requirements:</h4>
+              <p class="text-sm mb-2">Must demonstrate knowledge through:</p>
+              <ul class="list-disc list-inside space-y-1 text-sm ml-4">
+                <li>Food manager training certificate, OR</li>
+                <li>No critical violations, OR</li>
+                <li>Correctly answering inspector's food safety questions</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate restroom contact
+    function generateRestroomContact(hasSeating) {
+      const contactNum = appState.determinedClass === 'I' ? '4' : appState.determinedClass === 'II' ? '5' : appState.determinedClass === 'III' ? '6' : '7';
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">${contactNum}️⃣ REQUIRED: Restroom Access</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-2">For Staff and Operations</p>
+            ${hasSeating ? '<p class="text-sm font-semibold text-red-600 mb-2">⚠️ Within 500 feet (customer seating provided)</p>' : ''}
+            ${hasSeating ? `
+            <div class="bg-blue-50 p-4 rounded text-sm italic mb-4">
+              <strong>From Oregon regulations:</strong><br>
+              "Operators may provide seating for customers if restrooms are readily accessible within 500 feet of the mobile food unit."
+            </div>
+            ` : ''}
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Restroom must have:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Hot and cold running water</li>
+                <li>Soap</li>
+                <li>Paper towels or air dryer</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Your action items:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Identify restroom location at each operating site</li>
+                ${hasSeating ? '<li>Confirm within 500 feet of unit</li>' : ''}
+                <li>Verify restroom meets requirements above</li>
+                <li>Document for health department inspection</li>
+              </ul>
+            </div>
+            ${hasSeating ? `
+            <div class="bg-yellow-50 p-4 rounded text-sm">
+              <strong>Additional requirement:</strong><br>
+              "When seating is provided, mobile food units must provide a garbage container for customers."
+            </div>
+            ` : ''}
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate outdoor cooking contact (Class IV only)
+    function generateOutdoorCookingContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">8️⃣ ADDITIONAL: Outdoor Cooking Unit Requirements</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-4">✓ You indicated using an outdoor cooking unit</p>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Contact for approval:</h4>
+              <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+              <p class="text-sm">${county.name} County Health Department</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded text-sm italic mb-4">
+              <strong>From Oregon regulations - Class IV ONLY:</strong><br>
+              "Class IV mobile food units may use one cooking unit, such as a BBQ or pizza oven that is not integral to the unit."
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">ALLOWED outdoor cooking units:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>✓ BBQ</li>
+                <li>✓ Pizza oven</li>
+                <li>✓ Similar single cooking devices</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">NOT ALLOWED as outdoor cooking unit:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>❌ Flat top grill</li>
+                <li>❌ Griddle</li>
+                <li>❌ Vertical rotating spit</li>
+                <li>❌ Wok</li>
+                <li>❌ Steamtable</li>
+                <li>❌ Stovetop</li>
+                <li>❌ Oven</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Requirements:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Must be in close proximity to mobile unit</li>
+                <li>Used ONLY for cooking (no prep/assembly outside)</li>
+                <li>Must be able to move with the unit</li>
+                <li>Handwashing system REQUIRED adjacent to cooking unit</li>
+              </ul>
+            </div>
+            <div class="bg-blue-50 p-4 rounded text-sm italic">
+              <strong>From Oregon regulations:</strong><br>
+              "Processing, portioning, preparation, or assembly of food must be conducted from inside the mobile food unit."
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate outdoor cooking warning (Classes I-III)
+    function generateOutdoorCookingWarning(classNum) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
+            <h3 class="text-xl font-semibold mb-2 text-red-700">⚠️ OUTDOOR COOKING NOT ALLOWED FOR YOUR CLASS</h3>
+            <div class="bg-blue-50 p-4 rounded text-sm italic mt-4">
+              <strong>From Oregon regulations:</strong><br>
+              "Only Class IV mobile food units may use one cooking unit, such as a BBQ or pizza oven that is not integral to the unit."
+            </div>
+            <p class="mt-4 font-semibold">Your Class ${classNum} does not permit outdoor cooking units.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate auxiliary storage contact
+    function generateAuxiliaryStorageContact(county) {
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">${appState.determinedClass === 'IV' && appState.outdoorCooking ? '9' : '8'}️⃣ ADDITIONAL: Auxiliary Storage Requirements</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-4">✓ You indicated using auxiliary storage</p>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Contact for approval:</h4>
+              <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+              <p class="text-sm">${county.name} County Health Department</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded text-sm italic mb-4">
+              <strong>From Oregon regulations:</strong><br>
+              "Auxiliary storage shall be limited to an amount that can be used in a day's operation and stored in such a manner as to prevent contamination or infestation (water-tight covered containers)."
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">What's allowed:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Shelves/tables integral to unit</li>
+                <li>Display of non-potentially hazardous condiments</li>
+                <li>Customer single-use articles (napkins, plastic utensils)</li>
+                <li>Commercially packaged non-PHF foods (cans, chips)</li>
+                <li>Limited to typical meal period amount</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">What's NOT allowed:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>❌ Self-service from auxiliary storage</li>
+                <li>❌ Assembly or preparation activities</li>
+                <li>❌ Refrigerators or freezers outside unit</li>
+                <li>❌ Storage overnight (must go in unit or licensed warehouse)</li>
+              </ul>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded text-sm">
+              <strong>Important:</strong><br>
+              "At the end of the day, items must be placed in the unit or a licensed warehouse."
+            </div>
+            <div class="bg-yellow-50 p-4 rounded text-sm mt-2">
+              "Handling of unpackaged foods, dishwashing and ice making are prohibited in a warehouse."
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Generate temporary events contact
+    function generateTemporaryEventsContact(county) {
+      const contactNum = appState.determinedClass === 'IV' && appState.outdoorCooking && appState.auxiliaryStorage ? '10' : 
+                        (appState.determinedClass === 'IV' && (appState.outdoorCooking || appState.auxiliaryStorage)) ? '9' : 
+                        appState.determinedClass === 'IV' ? '8' : 
+                        (appState.outdoorCooking || appState.auxiliaryStorage) ? '9' : '8';
+      return `
+        <div class="contact-separator"></div>
+        <div class="mb-6">
+          <h3 class="text-xl font-semibold mb-2">${contactNum}️⃣ ADDITIONAL: Temporary Event Permits</h3>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <p class="font-semibold mb-4">✓ You indicated operating at temporary events</p>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Contact for events in ${county.name} County:</h4>
+              <p class="text-sm">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">For events in OTHER counties:</h4>
+              <p class="text-sm">Contact that county's health department BEFORE event</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded text-sm italic mb-4">
+              <strong>From Oregon regulations:</strong><br>
+              "As a licensed mobile food unit, you may operate as a single-event temporary restaurant as specified under ORS 624.650."
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">What's allowed at events without additional permit:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Off-unit tables for non-potentially hazardous foods</li>
+                <li>Dispensed beverages display</li>
+                <li>Condiments display</li>
+                <li>Single-service articles (napkins, utensils)</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">What requires single-event temporary restaurant license:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Equipment placed outside unit beyond what's allowed</li>
+                <li>Operations conducted outside unit (prep, assembly, cooking)</li>
+                <li>Display/dispensing of potentially hazardous foods</li>
+              </ul>
+            </div>
+            <div class="mb-4">
+              <h4 class="font-semibold mb-2">Operating in different counties:</h4>
+              <p class="text-sm mb-2">"If a mobile unit operates in a county other than where it is licensed, the operator is required to notify the health department in the county where it has moved prior to operating."</p>
+            </div>
+            <div>
+              <h4 class="font-semibold mb-2">You must:</h4>
+              <ul class="list-disc list-inside space-y-1 text-sm">
+                <li>Contact event county health department BEFORE event</li>
+                <li>Obtain single-event temporary restaurant license if needed</li>
+                <li>Each event may require separate permit</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Populate checklist
+    function populateChecklist() {
+      const county = countyData[appState.selectedCounty];
+      const classNum = appState.determinedClass;
+      let stepNum = 1;
+      let checklistHTML = `
+        <div class="dropdown-section">
+          <div class="dropdown-header" data-section="checklist" onclick="toggleDropdown('checklist-header')" id="checklist-header">
+            <span>📋 YOUR COMPLETE PERMIT CHECKLIST</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+          <div class="dropdown-content" id="checklist-content">
+            <div class="dropdown-content-inner">
+              <p class="text-gray-600 mb-6">Required steps for Class ${classNum} in ${county.name}</p>
+              <div class="space-y-4">
+      `;
+
+      // Step 1: Health Department
+      checklistHTML += `
+        <div>
+          <p class="font-semibold">STEP ${stepNum++}: Contact ${county.name} County Health Department (PRIMARY)</p>
+            <p class="text-sm text-gray-600">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Schedule plan review consultation</li>
+      `;
+      if (classNum === 'IV') {
+        checklistHTML += `<li>Discuss commissary requirements</li>`;
+      }
+      if (classNum === 'III') {
+        checklistHTML += `<li>Discuss dishwashing: sink vs commissary</li>`;
+      }
+      checklistHTML += `</ul></div>`;
+
+      // Step 2: Fire Marshal (Classes II-IV)
+      if (['II', 'III', 'IV'].includes(classNum)) {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Contact Fire Marshal</p>
+              <p class="text-sm text-gray-600">📞 ${county.health.phone} (or reference to health dept)</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Schedule fire safety inspection</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      // Step 3: Planning
+      checklistHTML += `
+        <div>
+          <p class="font-semibold">STEP ${stepNum++}: Contact Planning/Zoning Department</p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <li>Obtain zoning approval for operating locations</li>
+          </ul>
+        </div>
+      `;
+
+      // Step 4: Dishwashing (Class III)
+      if (classNum === 'III') {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Secure Dishwashing Solution</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Install 3-comp sink on unit OR sign commissary agreement</li>
+              <li>Must complete BEFORE health department approval</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      // Step 4: Base of Operation (Class IV)
+      if (classNum === 'IV') {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Secure Base of Operation</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Sign commissary agreement OR qualify as self-contained</li>
+              <li>Must complete BEFORE health department approval</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      // Food Handler
+      checklistHTML += `
+        <div>
+          <p class="font-semibold">STEP ${stepNum++}: Food Handler Certificates</p>
+            <p class="text-sm text-gray-600">🌐 <a href="https://www.orfoodhandlers.com/eMain.aspx" target="_blank" class="text-blue-600 hover:underline">https://www.orfoodhandlers.com/eMain.aspx</a></p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <li>All workers must obtain certificates</li>
+          </ul>
+        </div>
+      `;
+
+      // Restroom
+      checklistHTML += `
+        <div>
+          <p class="font-semibold">STEP ${stepNum++}: Confirm Restroom Access</p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            ${appState.seating ? '<li>Within 500 feet, meets all requirements</li>' : '<li>At operating location, meets requirements</li>'}
+          </ul>
+        </div>
+      `;
+
+      // Outdoor cooking (Class IV only)
+      if (appState.outdoorCooking && classNum === 'IV') {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Outdoor Cooking Setup</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Review allowed equipment list</li>
+              <li>Plan handwashing station adjacent to cooking unit</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      // Auxiliary storage
+      if (appState.auxiliaryStorage) {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Auxiliary Storage Compliance</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Water-tight covered containers</li>
+              <li>One day's operation maximum</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      // Temporary events
+      if (appState.temporaryEvents) {
+        checklistHTML += `
+          <div>
+            <p class="font-semibold">STEP ${stepNum++}: Temporary Event Permits</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+              <li>Contact health department for each event county</li>
+              <li>Obtain permits before each event</li>
+            </ul>
+          </div>
+        `;
+      }
+
+      checklistHTML += `
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('checklist-section').innerHTML = checklistHTML;
+    }
+
+    // Go back to form
+    function goBack() {
+      document.getElementById('form-section').style.display = 'block';
+      document.getElementById('results-section').style.display = 'none';
+      window.scrollTo(0, 0);
+    }
+
+    // Toggle dropdown (global function)
+    function toggleDropdown(headerId) {
+      const header = document.getElementById(headerId);
+      if (!header) return;
+      const content = header.nextElementSibling;
+      const icon = header.querySelector('.dropdown-icon');
+      
+      if (content && icon) {
+        const isExpanded = content.classList.contains('expanded');
+        content.classList.toggle('expanded');
+        icon.classList.toggle('expanded');
+        header.classList.toggle('expanded');
+        
+        // Adjust padding immediately (before animation completes)
+        if (typeof window.adjustDynamicPadding === 'function') {
+          window.adjustDynamicPadding();
+        }
+        
+        // Adjust padding again after a short delay (mid-animation)
+        setTimeout(function() {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
+        }, 300);
+        
+        // Resize iframe after toggle (wait for full animation to complete - 0.5s + buffer)
+        setTimeout(function() {
+          if (typeof window.adjustDynamicPadding === 'function') {
+            window.adjustDynamicPadding();
+          }
+          if (typeof resizeIframe === 'function') {
+            resizeIframe();
+          }
+        }, 800);
+      }
+    }
+  </script>
+</body>
+</html>
