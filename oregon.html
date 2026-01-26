@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Oregon Mobile Kitchen Permit Requirements | Interactive Permit Tool</title>
-  <meta name="description" content="Get your complete Oregon mobile kitchen permit checklist and county contacts in minutes. Determine your mobile food unit classification, required permits, and health department contacts based on your menu and location.">
   
   <!-- Structured Data (Schema.org) -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    "name": "Oregon Mobile Kitchen Permit Requirements Tool",
-    "description": "Interactive tool to determine Oregon mobile food unit classification, required permits, and county health department contacts based on menu type and location.",
+    "name": "Oregon Mobile Food Facility Permit Requirements Tool",
+    "description": "Interactive tool to determine Oregon mobile food facility permit requirements, classification, and county health department contacts based on menu type and location.",
     "url": "https://yourusername.github.io/permit-checklist/oregon.html",
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Any",
@@ -21,12 +19,12 @@
       "price": "0",
       "priceCurrency": "USD"
     },
-    "featureList": [
+      "featureList": [
+      "Mobile food facility permit determination",
       "Mobile food unit classification determination",
       "County-specific permit requirements",
       "Health department contact information",
       "Complete permit checklist generation",
-      "Food temperature requirements",
       "Compliance requirements"
     ],
     "browserRequirements": "Requires JavaScript. Requires HTML5.",
@@ -38,8 +36,8 @@
   {
     "@context": "https://schema.org",
     "@type": "HowTo",
-    "name": "How to Get Your Oregon Mobile Kitchen Permit Requirements",
-    "description": "Step-by-step guide to determine your mobile food unit classification and required permits in Oregon.",
+    "name": "How to Get Your Oregon Mobile Food Facility Permit Requirements",
+    "description": "Step-by-step guide to determine your mobile food facility permit requirements, classification, and required permits in Oregon.",
     "step": [
       {
         "@type": "HowToStep",
@@ -315,7 +313,7 @@
     .oregon-tool-title {
       font-size: 1.875rem;
       font-weight: 700;
-      color: #111827;
+      color: #314254;
       margin-bottom: 0.5rem;
       line-height: 1.2;
     }
@@ -328,7 +326,7 @@
 
     .oregon-tool-subtitle {
       font-size: 1.125rem;
-      color: #4b5563;
+      color: #314254;
       line-height: 1.6;
     }
 
@@ -364,10 +362,10 @@
       <!-- Header -->
       <div class="oregon-tool-header">
         <div class="oregon-tool-title">
-          Oregon Mobile Kitchen Permit Requirements
+          Mobile Food Facility Permit Requirements in Oregon
         </div>
         <p class="oregon-tool-subtitle">
-          Get your complete permit checklist and county contacts in minutes
+          Get your complete permit checklist and county contacts in minutes. Note: Regulations may vary by location and are subject to change. Always verify current requirements with your local health department.
         </p>
       </div>
 
@@ -376,15 +374,15 @@
         
         <!-- Question 1: Menu Selection -->
         <div class="mb-8">
-          <h2 class="text-xl font-semibold mb-4">What best describes your menu?</h2>
-          <p class="text-sm text-gray-600 mb-4">Select ONE option that best matches your operation</p>
+          <h2 class="text-xl font-semibold mb-4" style="color:#314254;">What best describes your menu?</h2>
+          <p class="text-sm mb-4" style="color:#314254;">Select ONE option that best matches your operation</p>
           
           <div class="space-y-3">
             <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="radio" name="menu" value="A" class="mt-1 mr-3" required>
               <div>
-                <div class="font-semibold">Pre-packaged foods only</div>
-                <div class="text-sm text-gray-600 mt-1">
+                <div class="font-semibold" style="color:#314254;">Pre-packaged foods only</div>
+                <div class="text-sm mt-1" style="color:#314254;">
                   Example: Chips, canned sodas, wrapped sandwiches<br>
                   No preparation, no cooking
                 </div>
@@ -394,8 +392,8 @@
             <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="radio" name="menu" value="B" class="mt-1 mr-3" required>
               <div>
-                <div class="font-semibold">Hot or cold display foods (unpackaged)</div>
-                <div class="text-sm text-gray-600 mt-1">
+                <div class="font-semibold" style="color:#314254;">Hot or cold display foods (unpackaged)</div>
+                <div class="text-sm mt-1" style="color:#314254;">
                   Example: Hot dogs in warmer, salads in cold display<br>
                   No preparation on unit, just holding/serving
                 </div>
@@ -405,8 +403,8 @@
             <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="radio" name="menu" value="C" class="mt-1 mr-3" required>
               <div>
-                <div class="font-semibold">Prepared/assembled foods</div>
-                <div class="text-sm text-gray-600 mt-1">
+                <div class="font-semibold" style="color:#314254;">Prepared/assembled foods</div>
+                <div class="text-sm mt-1" style="color:#314254;">
                   Example: Sandwiches made on unit, espresso drinks, smoothies<br>
                   Preparation but NO cooking raw animal products
                 </div>
@@ -416,8 +414,8 @@
             <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="radio" name="menu" value="D" class="mt-1 mr-3" required>
               <div>
-                <div class="font-semibold">Cooked foods including raw animal products</div>
-                <div class="text-sm text-gray-600 mt-1">
+                <div class="font-semibold" style="color:#314254;">Cooked foods including raw animal products</div>
+                <div class="text-sm mt-1" style="color:#314254;">
                   Example: Burgers, chicken, fish, eggs cooked from raw<br>
                   Full cooking operation
                 </div>
@@ -430,7 +428,7 @@
 
         <!-- Question 2: County Selection -->
         <div class="mb-8">
-          <h2 class="text-xl font-semibold mb-4">Where will you operate?</h2>
+          <h2 class="text-xl font-semibold mb-4" style="color:#314254;">Where will you operate?</h2>
           <select id="county" class="w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:border-[#286140]" required>
             <option value="default">Select County</option>
             <option value="Baker">Baker County</option>
@@ -476,28 +474,28 @@
 
         <!-- Question 3: Additional Options -->
         <div class="mb-8">
-          <h2 class="text-xl font-semibold mb-4">Will you have any of these?</h2>
-          <p class="text-sm text-gray-600 mb-4">Select all that apply</p>
+          <h2 class="text-xl font-semibold mb-4" style="color:#314254;">Will you have any of these?</h2>
+          <p class="text-sm mb-4" style="color:#314254;">Select all that apply</p>
           
           <div class="space-y-3">
             <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="checkbox" id="outdoor-cooking" class="mr-3">
-              <span>Outdoor cooking unit (BBQ, pizza oven)</span>
+              <span style="color:#314254;">Outdoor cooking unit (BBQ, pizza oven)</span>
             </label>
             
             <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="checkbox" id="seating" class="mr-3">
-              <span>Customer seating area</span>
+              <span style="color:#314254;">Customer seating area</span>
             </label>
             
             <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="checkbox" id="auxiliary-storage" class="mr-3">
-              <span>Auxiliary storage (shelves/tables outside unit)</span>
+              <span style="color:#314254;">Auxiliary storage (shelves/tables outside unit)</span>
             </label>
             
             <label class="flex items-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition hover:border-[#286140]">
               <input type="checkbox" id="temp-events" class="mr-3">
-              <span>Operating at temporary events (fairs, festivals)</span>
+              <span style="color:#314254;">Operating at temporary events (fairs, festivals)</span>
             </label>
           </div>
         </div>
@@ -573,9 +571,6 @@
       <!-- Requirements Table -->
       <div id="requirements-table-section" class="mb-8"></div>
 
-      <!-- Temperature Requirements -->
-      <div id="temperature-section" class="mb-8"></div>
-
       <!-- Compliance Notes -->
       <div id="compliance-section" class="mb-8"></div>
 
@@ -587,7 +582,7 @@
 
       <!-- FAQ Section -->
       <div class="mb-8">
-        <h2 class="text-2xl font-bold mb-6">❓ FREQUENTLY ASKED QUESTIONS</h2>
+        <h2 class="text-2xl font-bold mb-6" style="color:#314254;">❓ FREQUENTLY ASKED QUESTIONS</h2>
         
         <div class="space-y-4">
           <!-- FAQ 1 -->
@@ -613,7 +608,7 @@
             </div>
             <div class="dropdown-content" id="faq-content-2">
               <div class="dropdown-content-inner">
-                <p class="text-gray-700">
+                <p style="color:#314254;">
                   A: Yes. Any mobile food unit operating in Oregon requires a full mobile unit license with plan review, inspection, and health department approval - regardless of how many days you'll operate. Plan for 6-8 weeks minimum lead time.
                 </p>
               </div>
@@ -628,7 +623,7 @@
             </div>
             <div class="dropdown-content" id="faq-content-3">
               <div class="dropdown-content-inner">
-                <p class="text-gray-700">
+                <p style="color:#314254;">
                   A: Yes! Your Class IV license is annual and covers unlimited events within Oregon. You do NOT need to re-apply for each event. You may need event-specific TRF permits if conducting operations outside the unit, and must notify health departments when operating in different counties.
                 </p>
               </div>
@@ -643,7 +638,7 @@
             </div>
             <div class="dropdown-content" id="faq-content-4">
               <div class="dropdown-content-inner">
-                <p class="text-gray-700">
+                <p style="color:#314254;">
                   A: Your Class IV license is for the MOBILE UNIT itself (annual). A TRF (Temporary Restaurant Facility) is for a specific EVENT when you place equipment or conduct operations OUTSIDE your licensed mobile unit. Most events inside the unit do not need TRF.
                 </p>
               </div>
@@ -658,15 +653,15 @@
             </div>
             <div class="dropdown-content" id="faq-content-5">
               <div class="dropdown-content-inner">
-                <p class="text-gray-700 mb-2">
+                <p class="mb-2" style="color:#314254;">
                   A: License fees vary by county, typically:
                 </p>
-                <ul class="list-disc list-inside space-y-1 text-gray-700 ml-4">
+                <ul class="list-disc list-inside space-y-1 ml-4" style="color:#314254;">
                   <li>Class IV plan review: $200-500</li>
                   <li>Annual license: $300-800</li>
                   <li>TRF per event: $50-200</li>
                 </ul>
-                <p class="text-gray-700 mt-2">
+                <p class="mt-2" style="color:#314254;">
                   Contact your county health department for exact fees.
                 </p>
               </div>
@@ -681,7 +676,7 @@
             </div>
             <div class="dropdown-content" id="faq-content-6">
               <div class="dropdown-content-inner">
-                <p class="text-gray-700">
+                <p style="color:#314254;">
                   A: Yes. Our Class IV mobile kitchen trailers come pre-approved in all 36 Oregon counties with complete documentation packages. We handle the permit complexity so you can focus on your event.
                 </p>
               </div>
@@ -695,15 +690,14 @@
         <div class="flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start">
           <!-- Content Section -->
           <div class="flex-1 w-full md:w-auto">
-            <h2 class="text-2xl font-bold mb-4">Mobile Culinaire: Code Compliant Mobile Kitchens Ready to Operate</h2>
-            <p class="mb-4">Start serving in days, not weeks:</p>
+            <h2 class="text-2xl font-bold mb-2">Mobile Culinaire: Code Compliant Mobile Kitchens for Rent</h2>
+            <p class="mb-4 text-lg">High quality mobile kitchen rentals for renovations and multi-month projects</p>
             <ul class="list-disc list-inside mb-6 space-y-2">
-              <li>Code Compliant mobile kitchen trailers for all 36 Oregon counties</li>
+              <li>Code-compliant mobile kitchen trailers for all 36 Oregon counties</li>
+              <li>Ready-to-use temporary kitchen</li>
               <li>Meet all Oregon health department specifications</li>
-              <li>Fire marshal inspection-ready equipment and design</li>
-              <li>Complete documentation packages included</li>
+              <li>Commercial grade kitchen equipment</li>
             </ul>
-            <p class="mb-6 font-semibold">Operational in one day.</p>
             <div class="space-y-3">
               <a href="https://www.mobileculinaire.com/mobile-kitchen" target="_blank" class="inline-block w-full md:w-auto bg-white text-green-600 font-semibold py-3 px-6 rounded-lg hover:bg-gray-100 transition text-center">
                 See models
@@ -1442,7 +1436,6 @@
         // Populate results
         populateClassHeader();
         populateRequirementsTable();
-        populateTemperatureSection();
         populateComplianceNotes();
         populateContacts();
         populateChecklist();
@@ -1536,19 +1529,19 @@
       }
       
       document.getElementById('class-header').innerHTML = `
-        <h2 class="text-2xl font-bold mb-4">Your Mobile Kitchen Classification</h2>
+        <h2 class="text-2xl font-bold mb-4" style="color:#314254;">Your Mobile Kitchen Classification</h2>
         <div class="text-4xl font-bold mb-4" style="color:#286140;">CLASS ${classNum} MOBILE FOOD UNIT</div>
         <div class="space-y-4">
           <div>
-            <h3 class="font-semibold mb-2">Why this class?</h3>
-            <ul class="list-disc list-inside space-y-1">
+            <h3 class="font-semibold mb-2" style="color:#314254;">Why this class?</h3>
+            <ul class="list-disc list-inside space-y-1" style="color:#314254;">
               <li>You selected: <strong>${menuText}</strong></li>
               <li>${whyText}</li>
             </ul>
           </div>
           <div>
-            <h3 class="font-semibold mb-2">What this class allows:</h3>
-            ${allowsText}
+            <h3 class="font-semibold mb-2" style="color:#314254;">What this class allows:</h3>
+            <div style="color:#314254;">${allowsText}</div>
           </div>
         </div>
       `;
@@ -1876,62 +1869,6 @@
       document.getElementById('requirements-table-section').innerHTML = tableHTML;
     }
 
-    // Populate temperature section
-    function populateTemperatureSection() {
-      const classNum = appState.determinedClass;
-      
-      if (classNum === 'I') {
-        document.getElementById('temperature-section').innerHTML = '';
-        return;
-      }
-      
-      document.getElementById('temperature-section').innerHTML = `
-        <div class="dropdown-section">
-          <div class="dropdown-header" data-section="temperature" onclick="toggleDropdown('temp-header')" id="temp-header">
-            <span>🌡️ REQUIRED FOOD TEMPERATURES</span>
-            <span class="dropdown-icon">▼</span>
-          </div>
-          <div class="dropdown-content" id="temp-content">
-            <div class="dropdown-content-inner">
-        <p class="text-gray-600 mb-4">(Potentially Hazardous Foods)</p>
-        <div class="space-y-4">
-          <div>
-            <h3 class="font-semibold mb-2">COLD HOLDING:</h3>
-            <ul class="list-disc list-inside space-y-1">
-              <li>41°F or below</li>
-              <li>Check every 4 hours minimum</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2">HOT HOLDING:</h3>
-            <ul class="list-disc list-inside space-y-1">
-              <li>135°F or above</li>
-              <li>Check every 4 hours minimum</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2">COOKING TEMPERATURES:</h3>
-            <ul class="list-disc list-inside space-y-1">
-              <li>Ground beef, pork: 155°F</li>
-              <li>Whole cuts, fish, eggs: 145°F</li>
-              <li>Poultry: 165°F</li>
-              <li>Reheating: 165°F (within 2 hours)</li>
-            </ul>
-          </div>
-          <div>
-            <h3 class="font-semibold mb-2">EQUIPMENT REQUIRED:</h3>
-            <p>✅ Metal-stem thermometer (0°F to 220°F)</p>
-          </div>
-          <div class="bg-blue-50 p-4 rounded-lg italic text-sm">
-            <strong>From Oregon regulations:</strong><br>
-            "A metal-stem thermometer, accurate to ±2°F, in the range of 0°F to 220°F, shall be provided to monitor food temperatures."
-          </div>
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
     // Populate compliance notes
     function populateComplianceNotes() {
       document.getElementById('compliance-section').innerHTML = `
@@ -1942,7 +1879,7 @@
           </div>
           <div class="dropdown-content" id="compliance-content">
             <div class="dropdown-content-inner">
-        <p class="text-gray-600 mb-4">(All Classes)</p>
+        <p class="mb-4" style="color:#314254;">(All Classes)</p>
         <div class="space-y-4">
           <div>
             <h3 class="font-semibold mb-2">BEFORE OPERATION:</h3>
@@ -2002,7 +1939,7 @@
           </div>
           <div class="dropdown-content" id="contacts-content">
             <div class="dropdown-content-inner">
-        <p class="text-gray-600 mb-4">Class ${classNum} - ${county.name}</p>
+        <p class="mb-4" style="color:#314254;">Class ${classNum} - ${county.name}</p>
       `;
 
       // Contact 1: Health Department
@@ -2062,11 +1999,11 @@
       let html = `
         <div class="contact-separator"></div>
         <div class="mb-6">
-          <h3 class="text-xl font-semibold mb-2">1️⃣ PRIMARY CONTACT: ${county.name} County Health Department</h3>
-          <p class="text-sm text-gray-600 mb-4">REQUIRED • Plan Review & License</p>
+          <h3 class="text-xl font-semibold mb-2" style="color:#314254;">1️⃣ PRIMARY CONTACT: ${county.name} County Health Department</h3>
+          <p class="text-sm mb-4" style="color:#314254;">REQUIRED • Plan Review & License</p>
           <div class="bg-gray-50 p-4 rounded-lg">
-            <p class="font-semibold mb-2">${county.name} County Health Department</p>
-            <p class="text-sm text-gray-600 mb-4">Environmental Health Division</p>
+            <p class="font-semibold mb-2" style="color:#314254;">${county.name} County Health Department</p>
+            <p class="text-sm mb-4" style="color:#314254;">Environmental Health Division</p>
             <div class="space-y-2">
       `;
       
@@ -2575,16 +2512,16 @@
           </div>
           <div class="dropdown-content" id="checklist-content">
             <div class="dropdown-content-inner">
-              <p class="text-gray-600 mb-6">Required steps for Class ${classNum} in ${county.name}</p>
+              <p class="mb-6" style="color:#314254;">Required steps for Class ${classNum} in ${county.name}</p>
               <div class="space-y-4">
       `;
 
       // Step 1: Health Department
       checklistHTML += `
         <div>
-          <p class="font-semibold">STEP ${stepNum++}: Contact ${county.name} County Health Department (PRIMARY)</p>
-            <p class="text-sm text-gray-600">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+          <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Contact ${county.name} County Health Department (PRIMARY)</p>
+            <p class="text-sm" style="color:#314254;">📞 <a href="tel:${county.health.phone.replace(/\D/g, '')}" class="text-blue-600 hover:underline">${county.health.phone}</a></p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Schedule plan review consultation</li>
       `;
       if (classNum === 'IV') {
@@ -2599,9 +2536,9 @@
       if (['II', 'III', 'IV'].includes(classNum)) {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Contact Fire Marshal</p>
-              <p class="text-sm text-gray-600">📞 ${county.health.phone} (or reference to health dept)</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Contact Fire Marshal</p>
+              <p class="text-sm" style="color:#314254;">📞 ${county.health.phone} (or reference to health dept)</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Schedule fire safety inspection</li>
             </ul>
           </div>
@@ -2611,8 +2548,8 @@
       // Step 3: Planning
       checklistHTML += `
         <div>
-          <p class="font-semibold">STEP ${stepNum++}: Contact Planning/Zoning Department</p>
-          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+          <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Contact Planning/Zoning Department</p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
             <li>Obtain zoning approval for operating locations</li>
           </ul>
         </div>
@@ -2622,8 +2559,8 @@
       if (classNum === 'III') {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Secure Dishwashing Solution</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Secure Dishwashing Solution</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Install 3-comp sink on unit OR sign commissary agreement</li>
               <li>Must complete BEFORE health department approval</li>
             </ul>
@@ -2635,8 +2572,8 @@
       if (classNum === 'IV') {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Secure Base of Operation</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Secure Base of Operation</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Sign commissary agreement OR qualify as self-contained</li>
               <li>Must complete BEFORE health department approval</li>
             </ul>
@@ -2647,9 +2584,9 @@
       // Food Handler
       checklistHTML += `
         <div>
-          <p class="font-semibold">STEP ${stepNum++}: Food Handler Certificates</p>
-            <p class="text-sm text-gray-600">🌐 <a href="https://www.orfoodhandlers.com/eMain.aspx" target="_blank" class="text-blue-600 hover:underline">https://www.orfoodhandlers.com/eMain.aspx</a></p>
-          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+          <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Food Handler Certificates</p>
+            <p class="text-sm" style="color:#314254;">🌐 <a href="https://www.orfoodhandlers.com/eMain.aspx" target="_blank" class="text-blue-600 hover:underline">https://www.orfoodhandlers.com/eMain.aspx</a></p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
             <li>All workers must obtain certificates</li>
           </ul>
         </div>
@@ -2658,8 +2595,8 @@
       // Restroom
       checklistHTML += `
         <div>
-          <p class="font-semibold">STEP ${stepNum++}: Confirm Restroom Access</p>
-          <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+          <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Confirm Restroom Access</p>
+          <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
             ${appState.seating ? '<li>Within 500 feet, meets all requirements</li>' : '<li>At operating location, meets requirements</li>'}
           </ul>
         </div>
@@ -2669,8 +2606,8 @@
       if (appState.outdoorCooking && classNum === 'IV') {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Outdoor Cooking Setup</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Outdoor Cooking Setup</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Review allowed equipment list</li>
               <li>Plan handwashing station adjacent to cooking unit</li>
             </ul>
@@ -2682,8 +2619,8 @@
       if (appState.auxiliaryStorage) {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Auxiliary Storage Compliance</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Auxiliary Storage Compliance</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Water-tight covered containers</li>
               <li>One day's operation maximum</li>
             </ul>
@@ -2695,8 +2632,8 @@
       if (appState.temporaryEvents) {
         checklistHTML += `
           <div>
-            <p class="font-semibold">STEP ${stepNum++}: Temporary Event Permits</p>
-            <ul class="list-disc list-inside space-y-1 text-sm mt-2">
+            <p class="font-semibold" style="color:#314254;">STEP ${stepNum++}: Temporary Event Permits</p>
+            <ul class="list-disc list-inside space-y-1 text-sm mt-2" style="color:#314254;">
               <li>Contact health department for each event county</li>
               <li>Obtain permits before each event</li>
             </ul>
