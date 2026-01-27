@@ -526,10 +526,10 @@
           <div class="p-6 md:p-8">
             <div class="flex items-start justify-between gap-4">
               <div>
-                <h2 id="email-gate-title" class="text-2xl font-bold text-gray-900">Get your results</h2>
-                <p class="text-gray-600 mt-1">Enter your details to view your personalized permit requirements.</p>
+                <h2 id="email-gate-title" class="text-2xl font-bold" style="color:#314254;">Get your results</h2>
+                <p class="mt-1" style="color:#314254;">Enter your details to view your personalized permit requirements.</p>
               </div>
-              <button type="button" class="text-gray-500 hover:text-gray-800" aria-label="Close" onclick="closeEmailGate()">
+              <button type="button" class="hover:text-gray-800" style="color:#314254;" aria-label="Close" onclick="closeEmailGate()">
                 ✕
               </button>
             </div>
@@ -537,19 +537,19 @@
             <form id="email-gate-form" class="mt-6" novalidate>
               <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label for="lead-first-name" class="block text-sm font-medium text-gray-700">Name</label>
+                  <label for="lead-first-name" class="block text-sm font-medium" style="color:#314254;">Name</label>
                   <input id="lead-first-name" name="firstName" type="text" autocomplete="given-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
                 </div>
                 <div>
-                  <label for="lead-last-name" class="block text-sm font-medium text-gray-700">Surname</label>
+                  <label for="lead-last-name" class="block text-sm font-medium" style="color:#314254;">Surname</label>
                   <input id="lead-last-name" name="lastName" type="text" autocomplete="family-name" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
                 </div>
                 <div class="md:col-span-2">
-                  <label for="lead-company" class="block text-sm font-medium text-gray-700">Company Name</label>
+                  <label for="lead-company" class="block text-sm font-medium" style="color:#314254;">Company Name</label>
                   <input id="lead-company" name="company" type="text" autocomplete="organization" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
                 </div>
                 <div class="md:col-span-2">
-                  <label for="lead-email" class="block text-sm font-medium text-gray-700">Email</label>
+                  <label for="lead-email" class="block text-sm font-medium" style="color:#314254;">Email</label>
                   <input id="lead-email" name="email" type="email" autocomplete="email" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
                   <p id="lead-error" class="hidden mt-2 text-sm text-red-600">Please complete all fields with a valid email.</p>
                 </div>
@@ -559,12 +559,12 @@
                 <button type="submit" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold text-white transition" style="background-color:#286140;" onmouseover="this.style.backgroundColor='#214f33'" onmouseout="this.style.backgroundColor='#286140'">
                   View Results
                 </button>
-                <button type="button" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold border-2 border-gray-200 text-gray-700 hover:bg-gray-50 transition" onclick="closeEmailGate()">
+                <button type="button" class="w-full md:w-auto px-6 py-3 rounded-lg font-semibold border-2 border-gray-200 hover:bg-gray-50 transition" style="color:#314254;" onclick="closeEmailGate()">
                   Not now
                 </button>
               </div>
 
-              <p class="mt-4 text-xs text-gray-500">
+              <p class="mt-4 text-xs" style="color:#314254;">
                 By continuing, you agree we may contact you about your permit requirements.
               </p>
             </form>
