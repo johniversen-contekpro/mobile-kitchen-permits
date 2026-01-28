@@ -552,6 +552,7 @@
                   <label for="lead-email" class="block text-sm font-medium" style="color:#314254;">Email</label>
                   <input id="lead-email" name="email" type="email" autocomplete="email" required class="mt-1 w-full p-3 border-2 border-gray-200 rounded-lg focus:outline-none focus:ring-0" style="border-color:#e5e7eb;" />
                   <p id="lead-error" class="hidden mt-2 text-sm text-red-600">Please complete all fields with a valid email.</p>
+                  <p id="hubspot-status" class="hidden mt-2 text-xs text-gray-600">Submitting...</p>
                 </div>
               </div>
 
@@ -1092,7 +1093,10 @@
     const HUBSPOT_FORM = {
       enabled: true,
       portalId: '1790538',
-      formGuid: '7e19b647-2f34-454f-ac43-fb03b1efc9cc'
+      formGuid: '7e19b647-2f34-454f-ac43-fb03b1efc9cc',
+      // If your HubSpot form has GDPR/consent enabled, set this true and fill the consent text.
+      gdprEnabled: false,
+      consentText: 'I agree to allow this site to store and process my personal data.'
     };
 
     // Menu options mapping
@@ -1396,6 +1400,21 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
     }
 
+    function getCookieValue(name) {
+      const parts = String(document.cookie || '').split(';').map(s => s.trim());
+      for (const part of parts) {
+        if (part.startsWith(name + '=')) return decodeURIComponent(part.slice(name.length + 1));
+      }
+      return '';
+    }
+
+    function setHubSpotStatus(message) {
+      const el = document.getElementById('hubspot-status');
+      if (!el) return;
+      el.textContent = message || '';
+      el.classList.remove('hidden');
+    }
+
     // HubSpot Form submission (no API key needed)
     async function submitHubSpotForm({ firstName, lastName, company, email }) {
       if (!HUBSPOT_FORM.enabled) return { success: false, error: 'HubSpot form disabled' };
@@ -1413,27 +1432,46 @@
       const payload = {
         submittedAt: Date.now(),
         fields: [
+          // These names must match the internal field names on your HubSpot form
           { name: 'email', value: email },
           { name: 'firstname', value: firstName },
           { name: 'lastname', value: lastName },
           { name: 'company', value: company }
         ],
         context: {
+          // If the HubSpot tracking cookie exists, include it so HubSpot can attribute the submission
+          hutk: getCookieValue('hubspotutk') || undefined,
           pageUri: window.location.href,
           pageName: document.title
-        }
+        },
+        legalConsentOptions: HUBSPOT_FORM.gdprEnabled
+          ? {
+              consent: {
+                consentToProcess: true,
+                text: HUBSPOT_FORM.consentText || 'Consent to process personal data.'
+              }
+            }
+          : undefined
       };
 
       try {
+        console.log('Submitting HubSpot form:', { endpoint, payload });
+
         const response = await fetch(endpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
+          mode: 'cors',
           body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.message || `HubSpot Forms API error: ${response.status}`);
+          throw new Error(
+            errorData.message ||
+              errorData.errors?.[0]?.message ||
+              errorData.inlineMessage ||
+              `HubSpot Forms API error: ${response.status}`
+          );
         }
 
         return { success: true };
@@ -1468,20 +1506,19 @@
         appState.leadCaptured = true;
         appState.lead = { firstName, lastName, company, email };
 
-        // Submit to HubSpot Form (non-blocking)
-        submitHubSpotForm({ firstName, lastName, company, email })
-          .then(result => {
-            if (result.success) {
-              console.log('Successfully submitted HubSpot form');
-            } else {
-              console.warn('HubSpot form submission failed:', result.error);
-              // Continue anyway - don't block user experience
-            }
-          })
-          .catch(error => {
-            console.error('Unexpected error submitting HubSpot form:', error);
-            // Continue anyway - don't block user experience
-          });
+        setHubSpotStatus('Submitting to HubSpot...');
+
+        // Submit to HubSpot Form (blocking so we can show errors)
+        const result = await submitHubSpotForm({ firstName, lastName, company, email });
+
+        if (!result.success) {
+          console.warn('HubSpot form submission failed:', result.error);
+          setHubSpotStatus(`Couldn’t submit to HubSpot: ${result.error || 'Unknown error'}`);
+          // Keep the modal open so the user can retry or copy the error.
+          return;
+        }
+
+        setHubSpotStatus('Submitted.');
 
         closeEmailGate();
 
