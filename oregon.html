@@ -1083,23 +1083,16 @@
       }
     };
 
-    // HubSpot Configuration
-    // SECURITY WARNING: Never commit API keys to version control!
-    // 
-    // To configure:
-    // 1. Go to HubSpot Settings > Integrations > Private Apps
-    // 2. Create a new private app with "contacts" write permissions
-    // 3. Copy the access token and paste it below (or set via environment variable)
-    // 
-    // Optional: Create a custom property "lead_source" in HubSpot to track contacts from this tool:
-    // Settings > Properties > Contact properties > Create property
-    // Name: lead_source, Type: Single-line text
-    const HUBSPOT_CONFIG = {
-      enabled: true, // Set to false to disable HubSpot integration
-      // IMPORTANT: Replace with your API key. For production, consider using environment variables
-      // or a server-side proxy to keep the key secure.
-      apiKey: (typeof window !== 'undefined' && window.HUBSPOT_API_KEY) || 'YOUR_HUBSPOT_API_KEY_HERE',
-      portalId: null // Optional: Your HubSpot portal ID (not required for API key method)
+    // HubSpot Form integration (safe for static sites)
+    // This submits to your HubSpot **Form** (no API key in the browser).
+    //
+    // Fill these in from HubSpot:
+    // - Portal ID: HubSpot Settings > Account defaults > Account information
+    // - Form GUID: Marketing > Lead Capture > Forms > (your form) > Share > Embed > "formId"
+    const HUBSPOT_FORM = {
+      enabled: true,
+      portalId: '1790538',
+      formGuid: '7e19b647-2f34-454f-ac43-fb03b1efc9cc'
     };
 
     // Menu options mapping
@@ -1403,48 +1396,49 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
     }
 
-    // HubSpot Integration: Create contact
-    async function createHubSpotContact(contactData) {
-      if (!HUBSPOT_CONFIG.enabled || !HUBSPOT_CONFIG.apiKey || HUBSPOT_CONFIG.apiKey === 'YOUR_HUBSPOT_API_KEY_HERE') {
-        console.log('HubSpot integration is disabled or not configured');
-        return { success: false, error: 'HubSpot not configured' };
+    // HubSpot Form submission (no API key needed)
+    async function submitHubSpotForm({ firstName, lastName, company, email }) {
+      if (!HUBSPOT_FORM.enabled) return { success: false, error: 'HubSpot form disabled' };
+      if (!HUBSPOT_FORM.portalId || HUBSPOT_FORM.portalId === 'YOUR_PORTAL_ID_HERE') {
+        return { success: false, error: 'Missing HUBSPOT_FORM.portalId' };
+      }
+      if (!HUBSPOT_FORM.formGuid || HUBSPOT_FORM.formGuid === 'YOUR_FORM_GUID_HERE') {
+        return { success: false, error: 'Missing HUBSPOT_FORM.formGuid' };
       }
 
+      const endpoint = `https://api.hsforms.com/submissions/v3/integration/submit/${encodeURIComponent(
+        HUBSPOT_FORM.portalId
+      )}/${encodeURIComponent(HUBSPOT_FORM.formGuid)}`;
+
+      const payload = {
+        submittedAt: Date.now(),
+        fields: [
+          { name: 'email', value: email },
+          { name: 'firstname', value: firstName },
+          { name: 'lastname', value: lastName },
+          { name: 'company', value: company }
+        ],
+        context: {
+          pageUri: window.location.href,
+          pageName: document.title
+        }
+      };
+
       try {
-        const response = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+        const response = await fetch(endpoint, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${HUBSPOT_CONFIG.apiKey}`
-          },
-          body: JSON.stringify({
-            properties: {
-              email: contactData.email,
-              firstname: contactData.firstName,
-              lastname: contactData.lastName,
-              company: contactData.company,
-              lead_source: 'Oregon Permit Checklist Tool',
-              hs_analytics_source: 'Oregon Permit Checklist Tool',
-              hs_analytics_source_data_1: 'permit-checklist-tool'
-            }
-          })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
         });
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
-          // If contact already exists (409), that's okay - we'll treat it as success
-          if (response.status === 409) {
-            console.log('Contact already exists in HubSpot');
-            return { success: true, message: 'Contact already exists' };
-          }
-          throw new Error(errorData.message || `HubSpot API error: ${response.status}`);
+          throw new Error(errorData.message || `HubSpot Forms API error: ${response.status}`);
         }
 
-        const data = await response.json();
-        console.log('Contact created in HubSpot:', data);
-        return { success: true, data };
+        return { success: true };
       } catch (error) {
-        console.error('Error creating HubSpot contact:', error);
+        console.error('HubSpot form submission failed:', error);
         return { success: false, error: error.message };
       }
     }
@@ -1474,18 +1468,18 @@
         appState.leadCaptured = true;
         appState.lead = { firstName, lastName, company, email };
 
-        // Create contact in HubSpot (non-blocking)
-        createHubSpotContact({ firstName, lastName, company, email })
+        // Submit to HubSpot Form (non-blocking)
+        submitHubSpotForm({ firstName, lastName, company, email })
           .then(result => {
             if (result.success) {
-              console.log('Successfully created HubSpot contact');
+              console.log('Successfully submitted HubSpot form');
             } else {
-              console.warn('HubSpot contact creation failed:', result.error);
+              console.warn('HubSpot form submission failed:', result.error);
               // Continue anyway - don't block user experience
             }
           })
           .catch(error => {
-            console.error('Unexpected error creating HubSpot contact:', error);
+            console.error('Unexpected error submitting HubSpot form:', error);
             // Continue anyway - don't block user experience
           });
 
